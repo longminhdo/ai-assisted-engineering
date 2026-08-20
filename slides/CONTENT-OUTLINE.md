@@ -189,7 +189,59 @@ Prefer: point at OrderFilterModal.tsx directly.
 
 ---
 
-## 04-ai-communication-framework
+## 04-writing-docs-for-agents
+
+**slide_title:** Write Docs Agents Can Actually Use
+
+**key_points:**
+- Docs written for humans lean on tacit knowledge — agents don't have it
+- Prefer contracts over narrative: a type + example beats a paragraph
+- Structure over prose: explicit inputs/outputs, not a story
+- One doc, one concern — not "the whole feature," just this component
+- Outdated docs are worse than none — the agent trusts what's written, wrong or not
+
+**best_visual:** Side-by-side doc excerpt: a prose README paragraph tagged "agent misreads this" vs. a structured doc (type signature + example + constraint) tagged "agent uses this correctly."
+
+**core_quote:** "If a new teammate would need you to explain it out loud, the doc isn't finished."
+
+**code_or_example:**
+```
+Avoid:
+"This component handles user filtering with various options."
+
+Prefer:
+Props: { filters: UserFilter; onApply: (f: UserFilter) => void }
+Example: <UserFilterModal filters={current} onApply={setFilters} />
+```
+
+---
+
+## 05-verify-what-it-understood
+
+**slide_title:** Make It Show You What It Saw
+
+**key_points:**
+- Don't assume it parsed your context right — ask it to prove it
+- Have it restate the plan or sketch a visual before it writes any code
+- Tool-dependent inputs: pasted screenshot, a Figma frame, a live HTML/DOM read
+- A mismatch here is caught before code — the cheapest place in the whole loop
+- Costs one extra turn; saves a wrong implementation
+
+**best_visual:** Small "input -> restated understanding -> match?" loop, three tool icons (image, Figma, HTML) feeding the same verification checkpoint.
+
+**core_quote:** "Ask it to show you what it understood, not just what it will build."
+
+**code_or_example:**
+```
+Before implementing, describe back to me:
+- the data shape you'll use
+- the states this component can be in
+- a rough visual layout (ASCII sketch or one paragraph)
+```
+
+---
+
+## 06-ai-communication-framework
 
 **slide_title:** Context -> Goal -> Constraints -> References -> Output
 
@@ -347,31 +399,7 @@ could cause incorrect behavior.
 
 # SECTION: Frontend & Quality Depth
 
-## 01-frontend-specific-review
-
-**slide_title:** Six Frontend-Only Blind Spots
-
-**key_points:**
-- React/Vue: dependency arrays lie about their contract
-- State management: server state duplicated into global store
-- Data fetching: race conditions from rapid open/close
-- Performance: unmemoized filters at scale
-- Accessibility: modal with no focus trap, no ARIA
-- Responsive: fixed-width table breaks on phone
-
-**best_visual:** Six-lens grid (hooks, state, fetch, perf, a11y, responsive), each tile with a one-line bug example.
-
-**code_or_example:**
-```tsx
-useEffect(() => {
-  const id = setInterval(fetchData, 30000);
-  return () => clearInterval(id);
-}, []); // stale closure — dateRange never updates
-```
-
----
-
-## 02-ai-for-testing
+## 01-ai-for-testing
 
 **slide_title:** Coverage Is Not Correctness
 
@@ -395,7 +423,7 @@ it("calculates order total", () => {
 
 ---
 
-## 03-ai-for-documentation
+## 02-ai-for-documentation
 
 **slide_title:** AI as a Knowledge Tool, Not Just a Coder
 
@@ -405,7 +433,7 @@ it("calculates order total", () => {
 - Summarize architecture: ask for "known risks," not just a description
 - Migration/onboarding guides: ask what AI *couldn't* determine
 
-**best_visual:** Risk/reward 2x2: documentation tasks vs. code-generation tasks — docs land high-reward/low-risk quadrant.
+**best_visual:** Risk/reward 2x2: documentation tasks vs. code-generation tasks — docs land high-reward/low-risk quadrant. Axis note: "Risk" = cost if AI gets it wrong, not how often you'd use it — unreviewed code-gen is high-reward too, but a wrong answer ships silently; a wrong doc gets caught on read.
 
 **code_or_example:**
 ```
@@ -416,7 +444,7 @@ Flag anything that looks like a workaround for a bug elsewhere.
 
 ---
 
-## 04-ai-anti-patterns
+## 03-ai-anti-patterns
 
 **slide_title:** The Seven Ways This Goes Wrong
 

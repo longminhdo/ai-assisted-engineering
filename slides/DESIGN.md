@@ -23,7 +23,7 @@ This file is the design system this deck (and any future deck for this curriculu
 | `MOTION_INTENSITY` | **7** | Advanced choreography tier — every slide transition and every content reveal is GSAP-timed, staggered, eased. Not static, not chaotic. |
 | `VISUAL_DENSITY` | **4** | Art-gallery spacing. `120px` slide margins, one focal idea per slide, never more than ~5 text elements on screen at once. |
 
-These are locked. Do not drift toward centered symmetry, toward flat CSS-transition-only motion, or toward denser slides as the deck grows — variance/motion/density hold constant from slide 1 to slide 33.
+These are locked. Do not drift toward centered symmetry, toward flat CSS-transition-only motion, or toward denser slides as the deck grows — variance/motion/density hold constant from slide 1 to slide 34.
 
 ---
 
@@ -46,7 +46,7 @@ One accent, used identically everywhere it appears (Color Consistency Lock). No 
   --text-tertiary:  #5C6270;
 
   /* The one signal color. Warm orange — reads as "alert / active / alive"
-     without touching the purple-blue AI cliche. Locked across all 33 slides. */
+     without touching the purple-blue AI cliche. Locked across all 34 slides. */
   --accent:        #FF5A1F;
   --accent-soft:   rgba(255, 90, 31, 0.14);   /* tinted backgrounds, never a flat fill */
   --accent-line:   rgba(255, 90, 31, 0.45);   /* accent borders/underlines */
@@ -94,13 +94,14 @@ Display and body pair — no Inter, no Space Grotesk (both banned as this genera
 
 ## 4. Motion System
 
-Three transition **modes**, chosen by what the slide-change means — never randomized per-slide, always motivated:
+Two transition **modes**, chosen by what the slide-change means — never randomized per-slide, always motivated:
 
 | Mode | When | What it communicates |
 |---|---|---|
-| **Cut** (default) | Topic -> topic inside the same section | Continuity — we're still in the same conversation |
-| **Wipe** | Entering a new section divider | A chapter boundary — deliberate, not incidental |
+| **Cut** (default) | Topic -> topic, including into/out of section dividers | Continuity — we're still in the same conversation |
 | **Dissolve** | Into/out of the two closing quote slides | Gravitas — slow down, let it land |
+
+A dedicated "Wipe" mode for entering section dividers was tried (an accent-colored panel sweep) and removed — it read as an unnecessary, ugly flourish rather than a clean chapter marker. The section-divider slides still read as a boundary through their own layout (the full-bleed numeral), not through a special transition.
 
 ### 4.1 Slide-switch skeleton (GSAP core, no ScrollTrigger — this is click-driven)
 
@@ -125,16 +126,6 @@ function goToSlide(nextIndex, mode = 'cut') {
     to.classList.add('active');
     tl.to(from, { autoAlpha: 0, scale: 0.97, y: -16, duration: 0.5 }, 0)
       .to(to,   { autoAlpha: 1, scale: 1,    y: 0,   duration: 0.6 }, 0.08);
-
-  } else if (mode === 'wipe') {
-    // Accent panel sweeps left->right covering `from`, then reveals `to` as it exits right
-    const panel = document.querySelector('.wipe-panel');
-    to.classList.add('active');
-    gsap.set(panel, { xPercent: -100 });
-    gsap.set(to, { autoAlpha: 1 });
-    tl.to(panel, { xPercent: 0,   duration: 0.45, ease: 'power4.in' })
-      .set(from, { autoAlpha: 0 })
-      .to(panel, { xPercent: 100, duration: 0.55, ease: 'power4.out' }, '+=0.05');
 
   } else if (mode === 'dissolve') {
     gsap.set(to, { autoAlpha: 0, filter: 'blur(16px)' });
@@ -163,8 +154,8 @@ function revealContent(slideEl) {
 ### 4.3 Signature component animations (used where Section 7 flags them)
 
 - **Loop diagram (slide 2):** nodes draw in via `stagger` around the circle, then the connecting arc animates with a stroke-dashoffset sweep, then a small pulse travels once around the ring on loop-completion (motivated: shows the cycle "runs").
-- **Pipeline diagrams (slides 10, 27):** stages reveal left-to-right / top-to-bottom in sequence, each stage's connector line draws before the next stage fades in — reinforces "this is a sequence," not a list.
-- **Rule ticker (slide 28):** genuine `requestAnimationFrame`-free CSS/GSAP `xPercent` loop (one continuous marquee, the deck's only marquee — per the one-marquee-per-deck rule).
+- **Pipeline diagrams (slides 10, 28):** stages reveal left-to-right / top-to-bottom in sequence, each stage's connector line draws before the next stage fades in — reinforces "this is a sequence," not a list.
+- **Rule ticker (slide 29):** genuine `requestAnimationFrame`-free CSS/GSAP `xPercent` loop (one continuous marquee, the deck's only marquee — per the one-marquee-per-deck rule).
 
 ### 4.4 Reduced motion (mandatory)
 
@@ -175,7 +166,7 @@ Every timeline above checks `reduceMotion` first and short-circuits to an instan
 ## 5. Anti-Slop Checklist (adapted from the taste skill for a slide-deck context)
 
 - [ ] Zero em-dashes anywhere on any slide (headlines, captions, code comments, quotes).
-- [ ] One accent color (`--accent`) used identically on all 33 slides — no drifting to a second "status" color.
+- [ ] One accent color (`--accent`) used identically on all 34 slides — no drifting to a second "status" color.
 - [ ] One corner-radius system (4px panels / full-pill tags) — no mixed radii.
 - [ ] No centered-hero-with-bullet-list slide anywhere (the exact pattern the brief bans). Every content slide is asymmetric, split, diagrammatic, or a full-bleed statement — never "headline centered, bullets centered below."
 - [ ] No default drop shadows (`box-shadow: 0 4px 6px rgba(0,0,0,0.1)` Bootstrap-card style). Elevation = tinted dark shadow (`rgba(0,0,0,0.4-0.6)`, larger blur, low spread) or a hairline border, never a soft gray card shadow.
@@ -202,7 +193,7 @@ Every timeline above checks `reduceMotion` first and short-circuits to an instan
 
 ---
 
-## 7. Layout Mapping — All 33 Slides
+## 7. Layout Mapping — All 34 Slides
 
 Every row is a distinct layout family. No family repeats (Variance 8 requirement). Transition = the mode used to *arrive* at that slide.
 
@@ -211,38 +202,39 @@ Every row is a distinct layout family. No family repeats (Variance 8 requirement
 | 1 | — | Title | Editorial Manifesto Hero | Massive display type, off-center (not centered), mono kicker "AI-ASSISTED FRONTENDENGINEERING", subtle grid-pattern background | — (opening) |
 | 2 | — | Training Objective | Radial Loop Diagram | 7-node circular loop, center-lit with `--accent-glow` (moment 1 of 3), quote beneath | Cut |
 | 3 | — | Expected Capabilities | Asymmetric Bento (7 cells) | A-G tiles, mixed sizes (2 large + 5 small), not a uniform grid | Cut |
-| 4 | Foundations | Section Divider "01" | Full-bleed Numeral | Giant `01` in display font bleeding off-canvas, section name small, bottom-left | Wipe |
+| 4 | Foundations | Section Divider "01" | Full-bleed Numeral | Giant `01` in display font bleeding off-canvas, section name small, bottom-left | Cut |
 | 5 | Foundations | Pilot vs. Copilot | Asymmetric Split-Screen (60/40) | Left: Engineer column (accent-underlined). Right: AI column (slate/muted) | Cut |
 | 6 | Foundations | Everything Lives in the Window | Custom Metaphor Diagram | Vertical "filling glass" of token blocks, opacity-fading older blocks toward the bottom | Cut |
 | 7 | Foundations | Start Fresh, or Keep Going? | Horizontal Decision Flow | 3 gate-diamonds in sequence, routing lines to two end-states | Cut |
 | 8 | Foundations | Resource by Risk, Not Size | 2x2 Matrix | Quadrant plot, two examples placed as dots with labels | Cut |
-| 9 | Thinking Tools | Section Divider "02" | Full-bleed Numeral | Same numeral system as slide 4, different section name | Wipe |
+| 9 | Thinking Tools | Section Divider "02" | Full-bleed Numeral | Same numeral system as slide 4, different section name | Cut |
 | 10 | Thinking Tools | Requirement -> Contract | Horizontal Pipeline (7 stage) | Stage-by-stage draw-in, code snippet inset bottom-right | Cut |
 | 11 | Thinking Tools | Context Beats Clever Prompt | Vertical Pyramid | 5-tier pyramid, off-center-left, generous right white-space with the core quote | Cut |
 | 12 | Thinking Tools | The Design Is the Spec | Before/After Split | Left: quoted vague text treated as "noise" (low contrast). Right: annotated diagram-style callouts on a wireframe | Cut |
-| 13 | Thinking Tools | Context->Goal->Constraints->References->Output | Vertical Stepper Card | 5-row fillable template, mono labels + example text per row | Cut |
-| 14 | Workflow | Section Divider "03" | Full-bleed Numeral | Same system, section name "Workflow" | Wipe |
-| 15 | Workflow | Analyze -> Plan -> Review -> Implement | 4-Stage Relay + Cost Curve | Relay boxes on top, rising cost-of-mistake curve underneath, curve spikes right after "Review" if skipped | Cut |
-| 16 | Workflow | Generate / Transform / Explain / Discover | Bento Quadrant (4 equal-ish, asymmetric padding) | 4 cards, each its own accent-tinted icon zone | Cut |
-| 17 | Workflow | Hypotheses Before Fixes | Dual Loop Comparison | Left: tight converging spiral loop (accent). Right: flat dead-end loop (muted slate) | Cut |
-| 18 | Workflow | Refactor Is Not "Clean This Up" | 3-Gate Sequence | 3 padlock-style gates left to right, only the current gate lit | Cut |
-| 19 | Workflow | Ask It to Prove You Wrong | Speech-Bubble Contrast | Two chat-bubble panels stacked diagonally (not aligned), weak vs strong prompt | Cut |
-| 20 | Workflow | Generated Code Is Not Verified Code | Verification Pyramid (6-tier) | Literal 6-tier pyramid, mono annotation per tier ("catches: ___") | Cut |
-| 21 | Frontend Quality | Section Divider "04" | Full-bleed Numeral | Same system, section name "Frontend & Quality" | Wipe |
-| 22 | Frontend Quality | Six Frontend-Only Blind Spots | Asymmetric 6-cell Bento | Mixed cell sizes (not a neat 3x2 grid), one code snippet visible in the largest cell | Cut |
-| 23 | Frontend Quality | Coverage Is Not Correctness | Before/After Code Diff | Two stacked code blocks, red strike vs accent-highlighted line | Cut |
-| 24 | Frontend Quality | AI as a Knowledge Tool | Risk/Reward 2x2 | Quadrant plot, "Documentation" plotted high-reward/low-risk vs. "Code-gen" plotted elsewhere | Cut |
-| 25 | Frontend Quality | The Seven Ways This Goes Wrong | Masonry Wall (7 cards) | Uneven card heights, staggered vertical offsets, mono violation-quote per card | Cut |
-| 26 | Team Standard | Section Divider "05" | Full-bleed Numeral | Same system, section name "Team Standard" | Wipe |
-| 27 | Team Standard | The One Loop the Whole Team Runs | Vertical Pipeline Stepper (10 stage) | Tall vertical stepper, 2 "HUMAN REVIEW" gates lit with `--accent-glow` (moments 2 & 3 of 3), Verify branches into 3 parallel lanes that rejoin | Cut |
-| 28 | Team Standard | Ten Rules, One Team | Kinetic Rule Marquee | Continuous horizontal ticker of the 10 rules, mono-numbered, one accent word per rule (deck's single marquee) | Cut |
-| 29 | Playbooks + Advanced | Section Divider "06" | Full-bleed Numeral | Section name "Playbooks & Beyond" | Wipe |
-| 30 | Playbooks | A Recipe for Every Situation | 3x3 Situation Grid | 9 cards, uniform grid intentionally (menu metaphor — the one deliberate exception, since "menu of situations" is the point) | Cut |
-| 31 | Advanced Track | Beyond Your Own Session | Layered Stack Diagram | Two horizontal bands stacked (session habits below, shared tooling above), connecting arrows upward | Cut |
-| 32 | Closing | The Five Things to Remember | Numbered Stack Reveal | 5 lines, large display type, left-aligned ragged edge (not centered), revealed in sequence | Dissolve |
-| 33 | Closing | The Actual Goal | Full-bleed Centered Quote | Single largest-type moment in the deck, true center (the one deliberate exception to anti-center-bias — closing statement, not a hero) | Dissolve |
+| 13 | Thinking Tools | Write Docs Agents Can Actually Use | Doc Contrast Stack | Two stacked doc cards, top dimmed/muted (prose paragraph), bottom accent-highlighted (type signature + usage example) | Cut |
+| 14 | Thinking Tools | Make It Show You What It Saw | Convergent Input Diagram | Three tool-input nodes (image, Figma, HTML) converging into one lit "restated understanding" checkpoint node | Cut |
+| 15 | Thinking Tools | Context->Goal->Constraints->References->Output | Vertical Stepper Card | 5-row fillable template, mono labels + example text per row | Cut |
+| 16 | Workflow | Section Divider "03" | Full-bleed Numeral | Same system, section name "Workflow" | Cut |
+| 17 | Workflow | Analyze -> Plan -> Review -> Implement | 4-Stage Relay + Cost Curve | Relay boxes on top, rising cost-of-mistake curve underneath, curve spikes right after "Review" if skipped | Cut |
+| 18 | Workflow | Generate / Transform / Explain / Discover | Bento Quadrant (4 equal-ish, asymmetric padding) | 4 cards, each its own accent-tinted icon zone | Cut |
+| 19 | Workflow | Hypotheses Before Fixes | Dual Loop Comparison | Left: tight converging spiral loop (accent). Right: flat dead-end loop (muted slate) | Cut |
+| 20 | Workflow | Refactor Is Not "Clean This Up" | 3-Gate Sequence | 3 padlock-style gates left to right, only the current gate lit | Cut |
+| 21 | Workflow | Ask It to Prove You Wrong | Speech-Bubble Contrast | Two chat-bubble panels stacked diagonally (not aligned), weak vs strong prompt | Cut |
+| 22 | Workflow | Generated Code Is Not Verified Code | Verification Pyramid (6-tier) | Literal 6-tier pyramid, mono annotation per tier ("catches: ___") | Cut |
+| 23 | Frontend Quality | Section Divider "04" | Full-bleed Numeral | Same system, section name "Frontend & Quality" | Cut |
+| 24 | Frontend Quality | Coverage Is Not Correctness | Before/After Code Diff | Two stacked code blocks, red strike vs accent-highlighted line | Cut |
+| 25 | Frontend Quality | AI as a Knowledge Tool | Risk/Reward 2x2 | Quadrant plot, "Documentation" plotted high-reward/low-risk vs. "Code-gen" plotted elsewhere | Cut |
+| 26 | Frontend Quality | The Seven Ways This Goes Wrong | Masonry Wall (7 cards) | Uneven card heights, staggered vertical offsets, mono violation-quote per card | Cut |
+| 27 | Team Standard | Section Divider "05" | Full-bleed Numeral | Same system, section name "Team Standard" | Cut |
+| 28 | Team Standard | The One Loop the Whole Team Runs | Vertical Pipeline Stepper (10 stage) | Tall vertical stepper, 2 "HUMAN REVIEW" gates lit with `--accent-glow` (moments 2 & 3 of 3), Verify branches into 3 parallel lanes that rejoin | Cut |
+| 29 | Team Standard | Ten Rules, One Team | Kinetic Rule Marquee | Continuous horizontal ticker of the 10 rules, mono-numbered, one accent word per rule (deck's single marquee) | Cut |
+| 30 | Playbooks + Advanced | Section Divider "06" | Full-bleed Numeral | Section name "Playbooks & Beyond" | Cut |
+| 31 | Playbooks | A Recipe for Every Situation | 3x3 Situation Grid | 9 cards, uniform grid intentionally (menu metaphor — the one deliberate exception, since "menu of situations" is the point) | Cut |
+| 32 | Advanced Track | Beyond Your Own Session | Layered Stack Diagram | Two horizontal bands stacked (session habits below, shared tooling above), connecting arrows upward | Cut |
+| 33 | Closing | The Five Things to Remember | Numbered Stack Reveal | 5 lines, large display type, left-aligned ragged edge (not centered), revealed in sequence | Dissolve |
+| 34 | Closing | The Actual Goal | Full-bleed Centered Quote | Single largest-type moment in the deck, true center (the one deliberate exception to anti-center-bias — closing statement, not a hero) | Dissolve |
 
-**Family-repeat audit:** "Full-bleed Numeral" appears 6x (dividers only — same family by design, that's the section-marker system, not a content-layout repeat) and "Cut" transition is the default connective tissue (28 of 33 uses) — both are intentional systems, not variance failures. Every *content* slide (5-33 excluding dividers) uses a distinct layout family. Two deliberate centered exceptions are called out explicitly (30, 33) with their justification inline.
+**Family-repeat audit:** "Full-bleed Numeral" appears 6x (dividers only — same family by design, that's the section-marker system, not a content-layout repeat) and "Cut" is now the transition for every slide except the two closing Dissolve slides (31 of 34 uses) — both are intentional systems, not variance failures. Every *content* slide (5-34 excluding dividers) uses a distinct layout family. Two deliberate centered exceptions are called out explicitly (31, 34) with their justification inline.
 
 ---
 
