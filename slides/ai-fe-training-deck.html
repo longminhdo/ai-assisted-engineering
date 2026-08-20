@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Assisted Frontend Engineering</title>
+
+<!-- Fonts: Fontshare (display + body) and Google Fonts (mono) -->
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500,400&f[]=switzer@400,500,600,700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+
+<!-- GSAP: the deck's one external script dependency (slide-switch and content-reveal choreography) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+
+<style>
+
+/* =========================================================
+   1. RESET
+   ========================================================= */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+
+/* =========================================================
+   2. DESIGN TOKENS
+   Change these to change the whole deck. See DESIGN.md.
+   ========================================================= */
+:root {
+  /* Slate scale */
+  --stage-bg:      #050608;
+  --bg-primary:    #0A0C10;
+  --bg-elevated:   #14171D;
+  --bg-elevated-2: #1C2028;
+  --border-hair:   rgba(255,255,255,0.08);
+  --border-hair-2: rgba(255,255,255,0.14);
+
+  --text-primary:   #F3F5F7;
+  --text-secondary: #9AA1AC;
+  --text-tertiary:  #5C6270;
+
+  /* The one signal color, used identically everywhere */
+  --accent:        #FF5A1F;
+  --accent-soft:   rgba(255, 90, 31, 0.14);
+  --accent-line:   rgba(255, 90, 31, 0.45);
+  --accent-glow:   0 0 60px rgba(255, 90, 31, 0.25);
+
+  --slide-bg: var(--bg-primary);
+
+  --font-display: 'Cabinet Grotesk', sans-serif;
+  --font-body:    'Switzer', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --size-hero:     168px;
+  --size-display:  108px;
+  --size-h1:        72px;
+  --size-h2:        44px;
+  --size-body-lg:   30px;
+  --size-body:      24px;
+  --size-small:     18px;
+  --size-micro:     14px;
+
+  --radius-panel: 4px;
+  --shadow-elevated:    0 20px 40px rgba(0,0,0,0.4);
+  --shadow-elevated-lg: 0 30px 60px rgba(0,0,0,0.55);
+  --slide-margin: 120px;
+}
+
+/* =========================================================
+   3. VIEWPORT BASE (verbatim from frontend-slides viewport-base.css)
+   Fixed 16:9 stage authored at 1920x1080, scaled as a whole.
+   ========================================================= */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* =========================================================
+   4. BASE TYPOGRAPHY + SLIDE FRAME
+   ========================================================= */
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--stage-bg);
+}
+
+.slide {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+}
+
+/* Standard content frame: 120px art-gallery margin (VISUAL_DENSITY 4) */
+.slide-frame {
+  position: absolute;
+  inset: var(--slide-margin);
+}
+
+.slide-frame.full-bleed { inset: 0; }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.02; }
+em, i { font-style: italic; }
+
+/* =========================================================
+   5. SHARED UTILITIES
+   ========================================================= */
+.r-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--size-micro);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-elevated);
+}
+
+.tag {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-family: var(--font-mono);
+  font-size: var(--size-micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-hair-2);
+  color: var(--text-secondary);
+}
+
+.tag.accent { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+
+.quote-block {
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.mono { font-family: var(--font-mono); }
+
+code, .code-block {
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  line-height: 1.6;
+  white-space: pre;
+  color: var(--text-secondary);
+}
+
+.code-block {
+  display: block;
+  background: var(--bg-elevated-2);
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius-panel);
+  padding: 28px 32px;
+}
+
+.code-block .accent-line-text { color: var(--accent); }
+.code-block .dim-line { color: var(--text-tertiary); }
+.code-block .strike { color: var(--text-tertiary); text-decoration: line-through; text-decoration-color: rgba(92,98,112,0.7); }
+
+/* generic reveal-target elements start visible; GSAP .from() tweens handle the animated entrance */
+.r-item, .r-diagram, .r-title { will-change: transform, opacity; }
+
+/* =========================================================
+   6. SLIDE 01 -- EDITORIAL MANIFESTO HERO
+   ========================================================= */
+.slide--hero .hero-grid-bg {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 96px 96px;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 85%);
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent 85%);
+}
+.slide--hero .hero-frame {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: calc(100% - 240px);
+  max-width: 1400px;
+}
+.slide--hero .hero-kicker { margin-bottom: 40px; }
+.slide--hero .hero-title {
+  font-size: var(--size-hero);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+.slide--hero .hero-title em { color: var(--text-secondary); }
+.slide--hero .hero-sub {
+  margin-top: 44px;
+  max-width: 900px;
+  font-size: var(--size-body-lg);
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.slide--hero .hero-index {
+  position: absolute; right: 120px; top: 120px;
+  font-family: var(--font-mono); font-size: var(--size-small);
+  color: var(--text-tertiary); letter-spacing: 0.1em;
+}
+
+/* =========================================================
+   7. SLIDE 02 -- RADIAL LOOP DIAGRAM
+   ========================================================= */
+.slide--loop .loop-frame {
+  display: grid;
+  grid-template-columns: 620px 1fr;
+  align-items: center;
+  column-gap: 80px;
+}
+.slide--loop .loop-textcol { max-width: 560px; }
+.slide--loop .loop-textcol .r-title { font-size: var(--size-h1); margin-top: 24px; margin-bottom: 44px; }
+.slide--loop .loop-quote {
+  font-size: var(--size-h2);
+  line-height: 1.35;
+  color: var(--text-primary);
+  border-left: 2px solid var(--accent-line);
+  padding-left: 28px;
+}
+.slide--loop .loop-diagram { position: relative; width: 620px; height: 620px; justify-self: end; }
+.slide--loop .loop-diagram svg { width: 100%; height: 100%; overflow: visible; }
+.loop-ring { fill: none; stroke: var(--border-hair-2); stroke-width: 2; }
+.loop-ring-draw { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.loop-core { fill: var(--bg-elevated-2); stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 0 34px rgba(255,90,31,0.45)); }
+.loop-core-label { font-family: var(--font-mono); font-size: 15px; fill: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; text-anchor: middle; }
+.loop-node circle { fill: var(--bg-elevated); stroke: var(--border-hair-2); stroke-width: 2; }
+.loop-node text { fill: var(--text-primary); font-family: var(--font-mono); font-size: 16px; text-anchor: middle; }
+.loop-node .loop-node-num { fill: var(--text-tertiary); font-size: 13px; }
+.loop-pulse-rotor { transform-origin: 400px 400px; }
+.loop-pulse { fill: var(--accent); filter: drop-shadow(0 0 12px rgba(255,90,31,0.8)); }
+
+/* =========================================================
+   8. SLIDE 03 -- ASYMMETRIC BENTO (AGENDA, 7 CELLS)
+   ========================================================= */
+.slide--bento7 .bento-frame {display: flex; flex-direction: column; }
+.slide--bento7 .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
+.slide--bento7 .bento-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 16px;
+}
+.bento-tile {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hair);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-elevated);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bento-tile .bento-letter { font-family: var(--font-mono); font-size: 44px; color: var(--accent); font-weight: 500; }
+.bento-tile .bento-name { font-family: var(--font-display); font-size: 26px; margin-top: 16px; }
+.bento-a { grid-column: 1 / 4; grid-row: 1 / 3; }
+.bento-b { grid-column: 4 / 6; grid-row: 1 / 2; }
+.bento-c { grid-column: 6 / 7; grid-row: 1 / 3; }
+.bento-d { grid-column: 4 / 6; grid-row: 2 / 4; }
+.bento-e { grid-column: 1 / 3; grid-row: 3 / 4; }
+.bento-f { grid-column: 3 / 4; grid-row: 3 / 4; }
+.bento-g { grid-column: 6 / 7; grid-row: 3 / 4; }
+.bento-a .bento-letter, .bento-d .bento-letter { font-size: 60px; }
+.bento-a .bento-name, .bento-d .bento-name { font-size: 34px; }
+
+/* =========================================================
+   9. DIVIDER SYSTEM (6 slides share this family, by design)
+   ========================================================= */
+.slide--divider .divider-numeral {
+  position: absolute;
+  left: -40px; bottom: -140px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 920px;
+  line-height: 1;
+  color: var(--bg-elevated-2);
+  -webkit-text-stroke: 1px var(--border-hair-2);
+}
+.slide--divider .divider-name {
+  position: absolute; left: 120px; bottom: 120px;
+  font-family: var(--font-display);
+  font-size: var(--size-h1);
+  color: var(--text-primary);
+}
+.slide--divider .divider-num-label {
+  position: absolute; left: 120px; bottom: 232px;
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.slide--divider .divider-progress {
+  position: absolute; right: 120px; bottom: 120px;
+  font-family: var(--font-mono); font-size: var(--size-small); color: var(--text-tertiary);
+}
+
+/* =========================================================
+   10. SLIDE 05 -- PILOT VS COPILOT (60/40 SPLIT)
+   ========================================================= */
+.slide--split-pilot .split-frame {display: flex; flex-direction: column; }
+.slide--split-pilot .r-title { font-size: var(--size-h1); margin: 20px 0 48px; }
+.slide--split-pilot .split-body { flex: 1; display: grid; grid-template-columns: 60% 40%; column-gap: 64px; }
+.split-col { display: flex; flex-direction: column; }
+.split-col .split-col-label { font-family: var(--font-mono); font-size: var(--size-small); text-transform: uppercase; letter-spacing: 0.12em; padding-bottom: 20px; margin-bottom: 28px; }
+.split-col.pilot { border-bottom: 3px solid var(--accent); }
+.split-col.pilot .split-col-label { color: var(--accent); }
+.split-col.copilot { border-bottom: 1px solid var(--border-hair-2); }
+.split-col.copilot .split-col-label { color: var(--text-tertiary); }
+.split-col ul { list-style: none; }
+.split-col.pilot li { font-size: var(--size-body-lg); margin-bottom: 22px; color: var(--text-primary); }
+.split-col.copilot li { font-size: var(--size-body); margin-bottom: 20px; color: var(--text-secondary); }
+.split-quote { margin-top: 28px; font-size: 28px; color: var(--text-primary); font-family: var(--font-display); }
+.split-example { margin-top: auto; padding-top: 24px; }
+.split-example .code-block { font-size: 16px; padding: 20px 24px; }
+.split-example .example-note { margin-top: 12px; font-size: var(--size-small); color: var(--text-tertiary); font-style: italic; }
+
+/* =========================================================
+   11. SLIDE 06 -- FILLING GLASS (CONTEXT WINDOW)
+   ========================================================= */
+.slide--glass .glass-frame {display: grid; grid-template-columns: 460px 1fr; column-gap: 100px; align-items: center; }
+.slide--glass .r-title { font-size: var(--size-h1); margin: 20px 0 32px; max-width: 620px; }
+.slide--glass .glass-quote { font-size: var(--size-h2); color: var(--text-primary); font-family: var(--font-display); max-width: 640px; }
+.glass-vessel {
+  position: relative;
+  width: 340px; height: 620px;
+  justify-self: center;
+  border: 2px solid var(--border-hair-2);
+  border-top: none;
+  border-radius: 0 0 var(--radius-panel) var(--radius-panel);
+  clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 6px;
+  gap: 6px;
+}
+.glass-block {
+  height: 58px;
+  border-radius: 4px;
+  background: var(--accent);
+  display: flex; align-items: center; padding: 0 16px;
+  font-family: var(--font-mono); font-size: 13px; color: var(--bg-primary); font-weight: 600;
+}
+.glass-block span { color: rgba(10,12,16,0.7); }
+/* older blocks (further down the DOM, rendered lower via column-reverse) fade */
+.glass-block:nth-child(1) { opacity: 1; }
+.glass-block:nth-child(2) { opacity: 0.92; }
+.glass-block:nth-child(3) { opacity: 0.8; background: var(--accent); }
+.glass-block:nth-child(4) { opacity: 0.6; background: var(--bg-elevated-2); color: var(--text-secondary); }
+.glass-block:nth-child(5) { opacity: 0.42; background: var(--bg-elevated-2); color: var(--text-tertiary); }
+.glass-block:nth-child(6) { opacity: 0.26; background: var(--bg-elevated-2); color: var(--text-tertiary); }
+.glass-block:nth-child(7) { opacity: 0.14; background: var(--bg-elevated-2); color: var(--text-tertiary); }
+.glass-cap { position: absolute; top: -34px; left: 0; right: 0; text-align: center; font-family: var(--font-mono); font-size: var(--size-micro); letter-spacing: 0.18em; color: var(--text-tertiary); text-transform: uppercase; }
+
+/* =========================================================
+   12. SLIDE 07 -- HORIZONTAL DECISION FLOW
+   ========================================================= */
+.slide--decision .decision-frame {display: flex; flex-direction: column; }
+.slide--decision .r-title { font-size: var(--size-h1); margin: 20px 0 12px; }
+.slide--decision .decision-quote { font-size: 22px; color: var(--text-secondary); font-style: italic; margin-bottom: 48px; }
+.decision-row { flex: 1; display: flex; align-items: center; gap: 28px; }
+.decision-gate {
+  width: 176px; height: 176px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-hair-2);
+  transform: rotate(45deg);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.decision-gate span { transform: rotate(-45deg); text-align: center; font-family: var(--font-mono); font-size: 15px; color: var(--text-primary); padding: 0 10px; }
+.decision-connector { flex: 1; height: 2px; background: var(--border-hair-2); position: relative; min-width: 40px; }
+.decision-connector::after { content: '\2192'; position: absolute; right: -4px; top: -13px; color: var(--text-tertiary); font-size: 20px; }
+.decision-branch { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.decision-branch-line { width: 2px; height: 64px; background: var(--accent-line); }
+.decision-endpills { display: flex; justify-content: space-between; margin-top: 48px; padding: 0 40px; }
+.decision-end { font-family: var(--font-mono); font-size: var(--size-small); }
+.decision-end.fresh { color: var(--accent); }
+.decision-end.keep { color: var(--text-secondary); }
+.decision-code { margin-top: 36px; }
+.decision-code .code-block { font-size: 17px; padding: 18px 26px; display: inline-block; }
+
+/* =========================================================
+   13. SLIDE 08 -- 2x2 MATRIX (RESOURCE BY RISK)
+   ========================================================= */
+.slide--matrix .matrix-frame {display: grid; grid-template-columns: 1fr 640px; column-gap: 80px; align-items: center; }
+.slide--matrix .r-title { font-size: var(--size-h1); margin: 20px 0 28px; max-width: 560px; }
+.matrix-plot { position: relative; width: 640px; height: 640px; }
+.matrix-quadrants { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; border: 1px solid var(--border-hair-2); border-radius: var(--radius-panel); overflow: hidden; }
+.matrix-quadrants > div { border: 1px solid var(--border-hair); display: flex; align-items: flex-start; padding: 18px; font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; }
+.matrix-quadrants .q-hi { background: var(--accent-soft); color: var(--accent); }
+.matrix-axis-label { position: absolute; font-family: var(--font-mono); font-size: var(--size-small); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; }
+.matrix-axis-label.x-left { left: 0; bottom: -44px; }
+.matrix-axis-label.x-right { right: 0; bottom: -44px; }
+.matrix-axis-label.y-top { top: -34px; left: 0; }
+.matrix-axis-label.y-bottom { bottom: 0; left: -140px; writing-mode: vertical-rl; }
+.matrix-axis-label.y-top-side { top: 0; left: -170px; writing-mode: vertical-rl; }
+.matrix-dot { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 6px var(--accent-soft); }
+.matrix-dot-label { position: absolute; font-family: var(--font-mono); font-size: 15px; color: var(--text-primary); max-width: 220px; background: var(--bg-primary); padding: 2px 6px; }
+.matrix-quote { margin-top: 36px; font-size: 26px; font-family: var(--font-display); color: var(--text-primary); max-width: 520px; }
+
+/* =========================================================
+   14. SLIDE 10 -- HORIZONTAL PIPELINE (7 STAGE)
+   ========================================================= */
+.slide--pipeline .pipeline-frame {display: flex; flex-direction: column; }
+.slide--pipeline .r-title { font-size: var(--size-h1); margin: 20px 0 56px; }
+.pipeline-row { display: flex; align-items: center; }
+.pipeline-stage {
+  width: 168px; height: 128px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hair-2);
+  border-radius: var(--radius-panel);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  flex-shrink: 0;
+}
+.pipeline-stage .p-num { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+.pipeline-stage .p-name { font-family: var(--font-display); font-size: 19px; text-align: center; padding: 0 10px; }
+.pipeline-stage.p-first { border-color: var(--accent-line); background: var(--accent-soft); }
+.pipeline-stage.p-first .p-name { color: var(--accent); }
+.pipeline-connector { flex: 1; min-width: 24px; height: 2px; background: var(--border-hair-2); transform-origin: left center; }
+.pipeline-lower { display: flex; margin-top: 56px; gap: 64px; align-items: flex-start; }
+.pipeline-code { flex-shrink: 0; }
+.pipeline-code .code-block { font-size: 18px; padding: 26px 30px; }
+.pipeline-note { max-width: 520px; }
+.pipeline-note .r-kicker { display: block; margin-bottom: 14px; }
+.pipeline-note p { font-size: var(--size-body); color: var(--text-secondary); margin-bottom: 20px; }
+.dep-mini { display: flex; align-items: center; gap: 10px; }
+.dep-node { width: 14px; height: 14px; border-radius: 50%; background: var(--bg-elevated-2); border: 1px solid var(--border-hair-2); }
+.dep-node.accent { background: var(--accent); border-color: var(--accent); }
+.dep-line { width: 30px; height: 1px; background: var(--border-hair-2); }
+.dep-mini-label { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+
+/* =========================================================
+   15. SLIDE 11 -- VERTICAL PYRAMID (CONTEXT, 5-TIER SVG)
+   ========================================================= */
+.slide--pyramid-context .pc-frame {display: grid; grid-template-columns: 560px 1fr; column-gap: 90px; align-items: center; }
+.slide--pyramid-context .pc-diagram { width: 560px; }
+.slide--pyramid-context .pc-diagram svg { width: 100%; height: auto; }
+.pyr-band { stroke: var(--bg-primary); stroke-width: 3; }
+.pyr-band-1 { fill: var(--accent); }
+.pyr-band-2 { fill: #E0501B; }
+.pyr-band-3 { fill: var(--bg-elevated-2); }
+.pyr-band-4 { fill: var(--bg-elevated); }
+.pyr-band-5 { fill: var(--bg-elevated); opacity: 0.7; }
+.pyr-label { font-family: var(--font-mono); font-size: 16px; fill: var(--text-primary); text-anchor: middle; }
+.pyr-label.on-dark { fill: var(--bg-primary); font-weight: 600; }
+.slide--pyramid-context .pc-text { max-width: 640px; }
+.slide--pyramid-context .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
+.slide--pyramid-context .pc-quote { font-size: var(--size-h2); font-family: var(--font-display); color: var(--text-primary); margin-bottom: 32px; }
+.slide--pyramid-context .pc-example p { font-size: var(--size-small); color: var(--text-tertiary); margin-bottom: 6px; }
+.slide--pyramid-context .pc-example .prefer { color: var(--accent); font-family: var(--font-mono); font-size: var(--size-small); }
+
+/* =========================================================
+   16. SLIDE 12 -- BEFORE/AFTER SPLIT (DESIGN IS THE SPEC)
+   ========================================================= */
+.slide--design-spec .ds-frame {display: flex; flex-direction: column; }
+.slide--design-spec .r-title { font-size: var(--size-h1); margin: 20px 0 44px; }
+.ds-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 72px; }
+.ds-col-label { font-family: var(--font-mono); font-size: var(--size-small); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 24px; color: var(--text-tertiary); }
+.ds-noise { font-family: var(--font-display); font-size: 40px; color: var(--text-tertiary); line-height: 1.4; text-shadow: 0 0 1px rgba(154,161,172,0.4), 1px 1px 0 rgba(154,161,172,0.15); }
+.ds-wire {
+  position: relative;
+  width: 100%; max-width: calc(100% - 170px); height: 420px;
+  border: 1px dashed var(--border-hair-2);
+  border-radius: var(--radius-panel);
+  background: var(--bg-elevated);
+}
+.ds-wire .ds-box { position: absolute; border: 1px solid var(--text-secondary); border-radius: var(--radius-panel); }
+.ds-wire .ds-header { top: 24px; left: 24px; right: 24px; height: 56px; }
+.ds-wire .ds-avatar { top: 40px; left: 40px; width: 24px; height: 24px; border-radius: 50%; }
+.ds-wire .ds-card { top: 108px; left: 24px; right: 24px; bottom: 40px; }
+.ds-callout { position: absolute; font-family: var(--font-mono); font-size: 13px; color: var(--accent); white-space: nowrap; }
+.ds-callout::before { content: ''; position: absolute; top: 50%; width: 34px; height: 1px; background: var(--accent-line); }
+.ds-callout.c1 { top: 12px; right: -150px; } .ds-callout.c1::before { left: -38px; }
+.ds-callout.c2 { top: 118px; left: -128px; } .ds-callout.c2::before { right: -38px; }
+.ds-callout.c3 { bottom: 34px; right: -150px; } .ds-callout.c3::before { left: -38px; }
+
+/* =========================================================
+   17. SLIDE 13 -- VERTICAL STEPPER CARD (C-G-C-R-O)
+   ========================================================= */
+.slide--stepper-cgcro .sc-frame {display: flex; flex-direction: column; }
+.slide--stepper-cgcro .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
+.sc-rows { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.sc-row { flex: 1; display: grid; grid-template-columns: 340px 1fr; align-items: center; background: var(--bg-elevated); border-left: 3px solid var(--border-hair-2); padding: 0 40px; }
+.sc-row.active-row { border-left-color: var(--accent); }
+.sc-row .sc-label { font-family: var(--font-mono); font-size: 20px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+.sc-row .sc-example { font-size: var(--size-body); color: var(--text-secondary); font-family: var(--font-mono); }
+
+/* =========================================================
+   18. SLIDE 15 -- 4-STAGE RELAY + COST CURVE
+   ========================================================= */
+.slide--relay .relay-frame {display: flex; flex-direction: column; }
+.slide--relay .r-title { font-size: var(--size-h1); margin: 20px 0 20px; }
+.relay-quote { font-family: var(--font-mono); font-size: var(--size-small); color: var(--accent); margin-bottom: 44px; }
+.relay-row { display: flex; align-items: center; margin-bottom: 40px; }
+.relay-stage { width: 300px; height: 100px; background: var(--bg-elevated); border: 1px solid var(--border-hair-2); border-radius: var(--radius-panel); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 24px; flex-shrink: 0; }
+.relay-stage.review { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent); }
+.relay-baton { flex: 1; min-width: 20px; height: 2px; background: var(--border-hair-2); position: relative; }
+.relay-baton::after { content: '\2192'; position: absolute; right: -2px; top: -13px; color: var(--text-tertiary); font-size: 18px; }
+.relay-curve-wrap { flex: 1; position: relative; }
+.relay-curve-wrap svg { width: 100%; height: 100%; }
+.relay-curve-label { position: absolute; font-family: var(--font-mono); font-size: var(--size-small); }
+.relay-curve-label.safe { color: var(--text-secondary); left: 8px; bottom: 8px; }
+.relay-curve-label.spike { color: var(--accent); right: 8px; top: 4px; text-align: right; }
+.relay-example { margin-top: 20px; }
+.relay-example .code-block { font-size: 16px; padding: 16px 22px; display: inline-block; }
+
+/* =========================================================
+   19. SLIDE 16 -- BENTO QUADRANT (GENERATE/TRANSFORM/EXPLAIN/DISCOVER)
+   ========================================================= */
+.slide--quadrant4 .q4-frame {display: flex; flex-direction: column; }
+.slide--quadrant4 .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
+.q4-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
+.q4-card { background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel); box-shadow: var(--shadow-elevated); display: flex; flex-direction: column; }
+.q4-card .q4-zone { width: 64px; height: 64px; border-radius: var(--radius-panel); background: var(--accent-soft); color: var(--accent); font-family: var(--font-mono); font-size: 26px; display: flex; align-items: center; justify-content: center; }
+.q4-card .q4-name { font-family: var(--font-display); font-size: 28px; margin-top: 20px; }
+.q4-card .q4-tip { font-size: var(--size-small); color: var(--text-secondary); margin-top: 12px; max-width: 90%; }
+.q4-card.pad-tl { padding: 36px 40px 40px 40px; justify-content: flex-start; }
+.q4-card.pad-br { padding: 56px 40px 24px 56px; justify-content: flex-end; }
+.q4-card.pad-tr { padding: 24px 56px 56px 40px; justify-content: flex-start; }
+.q4-card.pad-bl { padding: 56px 24px 40px 40px; justify-content: flex-end; }
+
+/* =========================================================
+   20. SLIDE 17 -- DUAL LOOP COMPARISON
+   ========================================================= */
+.slide--dual-loop .dl-frame {display: flex; flex-direction: column; }
+.slide--dual-loop .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
+.dl-row { flex: 1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; }
+.dl-col { display: flex; flex-direction: column; align-items: center; }
+.dl-col .dl-label { font-family: var(--font-mono); font-size: var(--size-small); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
+.dl-col.good .dl-label { color: var(--accent); }
+.dl-col.bad .dl-label { color: var(--text-tertiary); }
+.dl-col svg { width: 100%; max-width: 480px; height: auto; }
+.dl-spiral { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.dl-flat { fill: none; stroke: var(--text-tertiary); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 4 10; }
+.dl-deadend { stroke: var(--text-tertiary); stroke-width: 4; stroke-linecap: round; }
+.dl-caption { margin-top: 20px; font-size: var(--size-small); color: var(--text-secondary); text-align: center; max-width: 380px; }
+
+/* =========================================================
+   21. SLIDE 18 -- 3-GATE SEQUENCE (REFACTOR)
+   ========================================================= */
+.slide--gates3 .g3-frame {display: flex; flex-direction: column; }
+.slide--gates3 .r-title { font-size: var(--size-h1); margin: 20px 0 60px; }
+.g3-row { flex: 1; display: flex; align-items: center; justify-content: center; gap: 80px; }
+.g3-gate { display: flex; flex-direction: column; align-items: center; gap: 24px; opacity: 0.4; }
+.g3-gate.lit { opacity: 1; }
+.g3-lock { width: 96px; height: 84px; position: relative; }
+.g3-lock .shackle { position: absolute; top: -34px; left: 50%; transform: translateX(-50%); width: 52px; height: 44px; border: 8px solid var(--text-tertiary); border-bottom: none; border-radius: 30px 30px 0 0; }
+.g3-gate.lit .shackle { border-color: var(--accent); }
+.g3-lock .body { position: absolute; bottom: 0; left: 0; right: 0; height: 66px; background: var(--bg-elevated); border: 2px solid var(--border-hair-2); border-radius: var(--radius-panel); }
+.g3-gate.lit .body { border-color: var(--accent-line); background: var(--accent-soft); }
+.g3-lock .keyhole { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; border-radius: 50%; background: var(--text-tertiary); }
+.g3-gate.lit .keyhole { background: var(--accent); }
+.g3-gate-name { font-family: var(--font-mono); font-size: var(--size-small); text-transform: uppercase; letter-spacing: 0.1em; }
+.g3-gate-arrow { color: var(--text-tertiary); font-size: 28px; }
+.g3-example { text-align: center; margin-top: 48px; }
+.g3-example .code-block { font-size: 17px; padding: 18px 28px; display: inline-block; text-align: left; }
+
+/* =========================================================
+   22. SLIDE 19 -- SPEECH-BUBBLE CONTRAST
+   ========================================================= */
+.slide--bubbles .r-title { font-size: var(--size-h1); position: absolute; top: 0; left: 0; }
+.bb-bubble { position: absolute; max-width: 620px; padding: 32px 36px; border-radius: var(--radius-panel); font-family: var(--font-mono); font-size: 20px; line-height: 1.5; }
+.bb-bubble::after { content: ''; position: absolute; width: 22px; height: 22px; transform: rotate(45deg); }
+.bb-weak { top: 200px; left: 0; background: var(--bg-elevated); border: 1px solid var(--border-hair-2); color: var(--text-secondary); }
+.bb-weak::after { background: var(--bg-elevated); border-right: 1px solid var(--border-hair-2); border-bottom: 1px solid var(--border-hair-2); bottom: -10px; left: 60px; }
+.bb-weak-tag { display: inline-block; margin-bottom: 14px; }
+.bb-strong { top: 480px; right: 0; background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--text-primary); }
+.bb-strong::after { background: var(--accent-soft); border-right: 1px solid var(--accent-line); border-bottom: 1px solid var(--accent-line); top: -10px; right: 60px; }
+.bb-strong-tag { display: inline-block; margin-bottom: 14px; }
+
+/* =========================================================
+   23. SLIDE 20 -- VERIFICATION PYRAMID (6-TIER SVG)
+   ========================================================= */
+.slide--verify-pyramid .vp-frame {display: grid; grid-template-columns: 1fr 620px; column-gap: 80px; align-items: center; }
+.slide--verify-pyramid .r-title { font-size: var(--size-h1); margin: 20px 0 20px; max-width: 560px; }
+.slide--verify-pyramid .vp-quote { font-size: 24px; color: var(--text-secondary); font-style: italic; }
+.vp-diagram svg { width: 100%; height: auto; }
+.vp-band { stroke: var(--bg-primary); stroke-width: 3; }
+.vp-band-0 { fill: var(--accent); }
+.vp-band-1 { fill: #E0501B; }
+.vp-band-2 { fill: #C24418; }
+.vp-band-3 { fill: var(--bg-elevated-2); }
+.vp-band-4 { fill: var(--bg-elevated); }
+.vp-band-5 { fill: var(--bg-elevated); opacity: 0.65; }
+.vp-label { font-family: var(--font-mono); font-size: 15px; fill: var(--text-primary); text-anchor: middle; }
+.vp-label.on-dark { fill: var(--bg-primary); font-weight: 600; }
+.vp-label-ext { text-anchor: start; fill: var(--text-primary); font-weight: 600; }
+.vp-leader { stroke: var(--border-hair-2); stroke-width: 1.5; }
+.vp-catch { position: relative; margin-top: 24px; }
+.vp-catch-row { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); padding: 6px 0; border-top: 1px solid var(--border-hair); }
+.vp-catch-row span:last-child { color: var(--text-secondary); }
+
+/* =========================================================
+   24. SLIDE 22 -- ASYMMETRIC 6-CELL BENTO (BLIND SPOTS)
+   ========================================================= */
+.slide--bento6 .b6-frame {display: flex; flex-direction: column; }
+.slide--bento6 .r-title { font-size: var(--size-h1); margin: 20px 0 32px; }
+.b6-grid { flex: 1; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(3, 1fr); gap: 16px; }
+.b6-tile { background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel); box-shadow: var(--shadow-elevated); padding: 28px; display: flex; flex-direction: column; }
+.b6-tile .b6-title { font-family: var(--font-display); font-size: 21px; margin-bottom: 10px; }
+.b6-tile .b6-desc { font-size: 16px; color: var(--text-secondary); }
+.b6-hooks { grid-column: 1 / 4; grid-row: 1 / 3; }
+.b6-state { grid-column: 4 / 6; grid-row: 1 / 2; }
+.b6-fetch { grid-column: 6 / 7; grid-row: 1 / 4; }
+.b6-perf  { grid-column: 4 / 6; grid-row: 2 / 4; }
+.b6-a11y  { grid-column: 1 / 3; grid-row: 3 / 4; }
+.b6-responsive { grid-column: 3 / 4; grid-row: 3 / 4; }
+.b6-hooks .b6-title { font-size: 26px; }
+.b6-hooks .code-block { margin-top: 14px; font-size: 14px; padding: 16px 18px; }
+
+/* =========================================================
+   25. SLIDE 23 -- BEFORE/AFTER CODE DIFF
+   ========================================================= */
+.slide--diff .diff-frame {display: flex; flex-direction: column; }
+.slide--diff .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
+.diff-stack { flex: 1; display: flex; flex-direction: column; gap: 28px; justify-content: center; max-width: 900px; }
+.diff-row { display: flex; align-items: center; gap: 20px; }
+.diff-marker { font-family: var(--font-mono); font-size: 20px; width: 30px; flex-shrink: 0; }
+.diff-row.bad .diff-marker { color: var(--text-tertiary); }
+.diff-row.good .diff-marker { color: var(--accent); }
+.diff-row .code-block { flex: 1; font-size: 20px; padding: 22px 28px; }
+.diff-row.bad .code-block { text-decoration: line-through; text-decoration-color: rgba(92,98,112,0.6); color: var(--text-tertiary); }
+.diff-row.good .code-block { border-color: var(--accent-line); color: var(--text-primary); }
+.diff-quote { margin-top: 8px; font-size: var(--size-h2); font-family: var(--font-display); color: var(--text-primary); max-width: 900px; }
+
+/* =========================================================
+   26. SLIDE 24 -- RISK/REWARD 2x2
+   ========================================================= */
+.slide--risk-reward .rr-frame {display: grid; grid-template-columns: 1fr 640px; column-gap: 80px; align-items: center; }
+.slide--risk-reward .r-title { font-size: var(--size-h1); margin: 20px 0 28px; max-width: 560px; }
+.rr-plot { position: relative; width: 640px; height: 640px; }
+.rr-quad { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; border-radius: var(--radius-panel); overflow: hidden; border: 1px solid var(--border-hair-2); }
+.rr-quad > div { border: 1px solid var(--border-hair); }
+.rr-quad .best { background: var(--accent-soft); }
+.rr-diag { position: absolute; inset: 0; background: linear-gradient(135deg, var(--accent-soft), transparent 60%); pointer-events: none; }
+.rr-axis-label { position: absolute; font-family: var(--font-mono); font-size: var(--size-small); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); }
+.rr-axis-label.top { top: -34px; left: 0; }
+.rr-axis-label.bottom { bottom: -34px; left: 0; }
+.rr-axis-label.left-side { left: -150px; top: 0; writing-mode: vertical-rl; }
+.rr-axis-label.right-side { left: -150px; bottom: 0; writing-mode: vertical-rl; }
+.rr-dot { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 6px var(--accent-soft); }
+.rr-dot.muted { background: var(--text-tertiary); box-shadow: none; }
+.rr-dot-label { position: absolute; font-family: var(--font-mono); font-size: 15px; color: var(--text-primary); background: var(--bg-primary); padding: 2px 8px; }
+
+/* =========================================================
+   27. SLIDE 25 -- MASONRY WALL (7 ANTI-PATTERNS)
+   ========================================================= */
+.slide--masonry .mw-frame {display: flex; flex-direction: column; }
+.slide--masonry .r-title { font-size: var(--size-h1); margin: 20px 0 36px; }
+.mw-columns { flex: 1; display: flex; gap: 20px; }
+.mw-col { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.mw-col:nth-child(2) { margin-top: 60px; }
+.mw-col:nth-child(3) { margin-top: 20px; }
+.mw-col:nth-child(4) { margin-top: 90px; }
+.mw-card { background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel); box-shadow: var(--shadow-elevated); padding: 26px; }
+.mw-card .mw-flag { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.mw-card .mw-name { font-family: var(--font-display); font-size: 22px; margin-bottom: 12px; }
+.mw-card .mw-quote { font-family: var(--font-mono); font-size: 14px; color: var(--text-tertiary); }
+.mw-card.tall { padding-bottom: 46px; }
+.mw-card.short .mw-quote { display: none; }
+
+/* =========================================================
+   28. SLIDE 27 -- VERTICAL PIPELINE STEPPER (10 STAGE)
+   ========================================================= */
+.slide--vstepper .vs-frame {display: grid; grid-template-columns: 560px 1fr; column-gap: 90px; }
+.slide--vstepper .r-kicker { margin-top: 4px; }
+.slide--vstepper .r-title { font-size: 52px; margin: 18px 0 28px; }
+.vs-col { display: flex; flex-direction: column; justify-content: center; }
+.vs-stage { display: flex; align-items: center; gap: 16px; padding: 9px 0; position: relative; }
+.vs-stage::before { content: ''; position: absolute; left: 13px; top: -9px; width: 2px; height: 9px; background: var(--border-hair-2); }
+.vs-stage:first-child::before { display: none; }
+.vs-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-elevated); border: 2px solid var(--border-hair-2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); }
+.vs-name { font-family: var(--font-body); font-size: 20px; color: var(--text-secondary); }
+.vs-stage.gate { padding: 14px 0; }
+.vs-stage.gate .vs-dot { background: var(--accent-soft); border-color: var(--accent); box-shadow: var(--accent-glow); color: var(--accent); }
+.vs-stage.gate .vs-name { color: var(--accent); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; font-size: 18px; }
+.vs-branch { margin-left: 44px; display: flex; gap: 10px; padding: 10px 0 14px; }
+.vs-chip { font-family: var(--font-mono); font-size: 13px; padding: 8px 14px; border: 1px solid var(--border-hair-2); border-radius: 999px; color: var(--text-secondary); }
+.vs-merge-note { margin-left: 44px; font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); padding-bottom: 6px; }
+.vs-caption { align-self: flex-end; margin-top: 32px; font-size: 24px; color: var(--text-secondary); font-family: var(--font-display); max-width: 480px; }
+
+/* =========================================================
+   29. SLIDE 28 -- KINETIC RULE MARQUEE
+   ========================================================= */
+.slide--marquee .mq-frame {display: flex; flex-direction: column; justify-content: center; }
+.slide--marquee .r-kicker { position: absolute; top: 120px; left: 120px; }
+.slide--marquee .r-title { position: absolute; top: 168px; left: 120px; font-size: var(--size-h1); }
+.mq-track-wrap { overflow: hidden; width: 100%; }
+.mq-track { display: flex; align-items: center; width: max-content; }
+.mq-item { display: flex; align-items: baseline; gap: 20px; padding: 0 56px; white-space: nowrap; }
+.mq-item .mq-num { font-family: var(--font-mono); font-size: 28px; color: var(--text-tertiary); }
+.mq-item .mq-text { font-family: var(--font-display); font-size: 46px; color: var(--text-primary); }
+.mq-item .mq-text em { color: var(--accent); font-style: normal; }
+.mq-item .mq-sep { color: var(--border-hair-2); font-size: 40px; }
+
+/* =========================================================
+   30. SLIDE 30 -- 3x3 SITUATION GRID (DELIBERATE UNIFORM EXCEPTION)
+   ========================================================= */
+.slide--grid9 .g9-frame {display: flex; flex-direction: column; }
+.slide--grid9 .r-title { font-size: var(--size-h1); margin: 20px 0 32px; }
+.g9-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 18px; }
+.g9-card { background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel); box-shadow: var(--shadow-elevated); padding: 26px; display: flex; flex-direction: column; justify-content: space-between; }
+.g9-card .g9-title { font-family: var(--font-display); font-size: 22px; }
+.g9-card .g9-shape { display: flex; gap: 8px; margin-top: 14px; }
+.g9-card .g9-shape span { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 9px; border: 1px solid var(--border-hair-2); border-radius: 999px; }
+
+/* =========================================================
+   31. SLIDE 31 -- LAYERED STACK DIAGRAM
+   ========================================================= */
+.slide--stack .st-frame {display: flex; flex-direction: column; }
+.slide--stack .r-title { font-size: var(--size-h1); margin: 20px 0 44px; }
+.st-bands { flex: 1; display: flex; flex-direction: column-reverse; gap: 24px; }
+.st-band { flex: 1; border-radius: var(--radius-panel); border: 1px solid var(--border-hair-2); display: flex; align-items: center; padding: 0 48px; position: relative; }
+.st-band.base { background: var(--bg-elevated); }
+.st-band.top { background: var(--bg-elevated-2); border-color: var(--accent-line); }
+.st-band-label { font-family: var(--font-mono); font-size: var(--size-small); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); margin-right: 44px; writing-mode: vertical-rl; }
+.st-band.top .st-band-label { color: var(--accent); }
+.st-items { display: flex; gap: 20px; flex-wrap: wrap; }
+.st-item { font-family: var(--font-mono); font-size: 18px; padding: 12px 22px; border: 1px solid var(--border-hair-2); border-radius: 999px; color: var(--text-secondary); }
+.st-band.top .st-item { border-color: var(--accent-line); color: var(--text-primary); }
+.st-arrow-col { position: absolute; left: 48px; top: -30px; font-size: 22px; color: var(--accent); }
+.st-caption { margin-top: 28px; font-size: var(--size-small); color: var(--text-secondary); max-width: 900px; }
+
+/* =========================================================
+   32. SLIDE 32 -- NUMBERED STACK REVEAL (CLOSING, DISSOLVE-IN)
+   ========================================================= */
+.slide--numbered-stack .ns-frame {display: flex; flex-direction: column; justify-content: center; }
+.slide--numbered-stack .r-kicker { margin-bottom: 40px; }
+.ns-line { display: flex; align-items: baseline; gap: 32px; margin-bottom: 30px; }
+.ns-line .ns-num { font-family: var(--font-mono); font-size: 30px; color: var(--accent); flex-shrink: 0; width: 60px; }
+.ns-line .ns-text { font-family: var(--font-display); font-size: 46px; color: var(--text-primary); line-height: 1.15; max-width: 1400px; }
+
+/* =========================================================
+   33. SLIDE 33 -- FULL-BLEED CENTERED QUOTE (CLOSING, DISSOLVE-IN)
+   Deliberate centered exception per DESIGN.md Section 5.
+   ========================================================= */
+.slide--final-quote .fq-frame {display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 220px; }
+.slide--final-quote .fq-mark { font-family: var(--font-display); font-size: 140px; color: var(--accent); line-height: 0.6; margin-bottom: 12px; }
+.slide--final-quote .fq-text { font-family: var(--font-display); font-size: 64px; line-height: 1.28; color: var(--text-primary); }
+.slide--final-quote .fq-text em { color: var(--accent); }
+
+/* =========================================================
+   34. WIPE TRANSITION PANEL
+   ========================================================= */
+.wipe-panel {
+  position: absolute; inset: 0;
+  background: var(--accent);
+  z-index: 50;
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+
+/* =========================================================
+   35. DECK CONTROLS -- PROGRESS DOT RAIL (outside the stage)
+   ========================================================= */
+.dot-rail { display: flex; align-items: center; gap: 9px; padding: 10px 18px; background: rgba(10,12,16,0.6); border: 1px solid var(--border-hair); border-radius: 999px; backdrop-filter: blur(6px); }
+.dot { width: 7px; height: 7px; border-radius: 999px; background: var(--text-tertiary); opacity: 0.5; transition: all 0.3s ease; padding: 0; }
+.dot.is-active { background: var(--accent); opacity: 1; width: 22px; }
+.dot.is-divider { background: var(--text-secondary); }
+
+/* =========================================================
+   36. INLINE EDIT MODE
+   ========================================================= */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+  position: fixed; top: 16px; left: 16px; z-index: 10001;
+  width: 44px; height: 44px; border-radius: 999px;
+  background: var(--bg-elevated); border: 1px solid var(--border-hair-2);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  box-shadow: var(--shadow-elevated);
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--accent); border-color: var(--accent); }
+[contenteditable="true"] { outline: 1px dashed var(--accent-line); outline-offset: 4px; cursor: text; }
+.edit-mode-banner {
+  position: fixed; top: 16px; left: 72px; z-index: 10001;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); background: var(--bg-elevated); border: 1px solid var(--accent-line);
+  padding: 12px 16px; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.edit-mode-banner.show { opacity: 1; }
+
+/* =========================================================
+   37. TABLE OF CONTENTS -- STICKY GLASS BUTTON + DRAWER
+   Fixed to the viewport (outside the 16:9 stage), like the
+   dot rail and edit toggle. Glassmorphism is a deliberate,
+   restrained exception per the taste skill's Section 5 --
+   one frosted surface, not applied anywhere else in the deck.
+   ========================================================= */
+.toc-toggle {
+  position: fixed; top: 16px; right: 16px; z-index: 10001;
+  width: 48px; height: 48px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-primary);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03)),
+    rgba(20,23,29,0.55);
+  border: 1px solid rgba(255,255,255,0.16);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 30px rgba(0,0,0,0.35);
+  cursor: pointer;
+  transition: border-color 0.25s ease, transform 0.2s ease;
+}
+.toc-toggle:hover { border-color: var(--accent-line); transform: translateY(-1px); }
+.toc-toggle:active { transform: translateY(0) scale(0.96); }
+.toc-toggle svg { display: block; color: inherit; }
+
+.toc-backdrop {
+  position: fixed; inset: 0; z-index: 10002;
+  background: rgba(5,6,8,0.55);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.toc-backdrop.show { opacity: 1; pointer-events: auto; }
+
+.toc-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 10003;
+  width: 420px; max-width: 86vw;
+  display: flex; flex-direction: column;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01)),
+    rgba(10,12,16,0.82);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.06), -24px 0 60px rgba(0,0,0,0.5);
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .toc-toggle, .toc-drawer {
+    background: var(--bg-elevated);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.toc-drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 30px 28px 22px;
+  border-bottom: 1px solid var(--border-hair);
+  flex-shrink: 0;
+}
+.toc-drawer-title {
+  font-family: var(--font-mono); font-size: var(--size-small);
+  text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-secondary);
+}
+.toc-close {
+  width: 34px; height: 34px; border-radius: 999px; padding: 0;
+  background: transparent; border: 1px solid var(--border-hair-2);
+  color: var(--text-secondary); font-size: 20px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.toc-close:hover { color: var(--text-primary); border-color: var(--accent-line); }
+
+.toc-list { flex: 1; overflow-y: auto; padding: 8px 16px 32px; }
+.toc-section {
+  font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--accent); padding: 22px 12px 10px;
+}
+.toc-section:first-child { padding-top: 14px; }
+.toc-item {
+  display: flex; align-items: baseline; gap: 14px; width: 100%;
+  padding: 11px 12px; border-radius: var(--radius-panel); margin-bottom: 2px;
+  background: none; border: none; text-align: left; cursor: pointer;
+  color: var(--text-secondary); font-family: var(--font-body); font-size: 15px; line-height: 1.4;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.toc-item .toc-num { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); flex-shrink: 0; width: 20px; }
+.toc-item:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+.toc-item.is-active { background: var(--accent-soft); color: var(--text-primary); }
+.toc-item.is-active .toc-num { color: var(--accent); }
+
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+  <main class="deck-stage" id="deckStage">
+
+    <div class="wipe-panel" id="wipePanel"></div>
+
+    <!-- Slide 1: Title -->
+    <section class="slide s1 slide--hero active" data-transition="cut">
+      <div class="hero-grid-bg"></div>
+      <div class="slide-frame hero-frame">
+        <div class="r-kicker hero-kicker editable">AI-ASSISTED FRONTEND ENGINEERING</div>
+        <h1 class="r-title hero-title editable">Better Decisions,<br><em>Not More Code.</em></h1>
+        <p class="r-item hero-sub editable">A working framework for engineers who ship with AI, not around it.</p>
+      </div>
+    </section>
+
+    <!-- Slide 2: Training Objective -->
+    <section class="slide s2 slide--loop" data-transition="cut">
+      <div class="slide-frame loop-frame">
+        <div class="loop-textcol">
+          <div class="r-kicker editable">TRAINING OBJECTIVE</div>
+          <h1 class="r-title editable">Better Decisions, Not More Code</h1>
+          <p class="r-item loop-quote editable">"How can engineers use AI to make better decisions and deliver software faster without compromising quality?"</p>
+        </div>
+        <div class="r-diagram loop-diagram" id="loopDiagram">
+          <svg viewBox="0 0 800 800">
+            <circle class="loop-ring" cx="400" cy="400" r="300"></circle>
+            <circle class="loop-ring-draw" id="loopRingDraw" cx="400" cy="400" r="300"></circle>
+            <g class="loop-nodes">
+              <g class="loop-node" transform="translate(400,100)"><circle r="46"></circle><text y="-4">Understand</text><text class="loop-node-num" y="16">01</text></g>
+              <g class="loop-node" transform="translate(635,213)"><circle r="46"></circle><text y="-4">Decompose</text><text class="loop-node-num" y="16">02</text></g>
+              <g class="loop-node" transform="translate(693,467)"><circle r="46"></circle><text y="-4">Context</text><text class="loop-node-num" y="16">03</text></g>
+              <g class="loop-node" transform="translate(530,670)"><circle r="46"></circle><text y="-4">Plan</text><text class="loop-node-num" y="16">04</text></g>
+              <g class="loop-node" transform="translate(270,670)"><circle r="46"></circle><text y="-4">Implement</text><text class="loop-node-num" y="16">05</text></g>
+              <g class="loop-node" transform="translate(108,467)"><circle r="46"></circle><text y="-4">Verify</text><text class="loop-node-num" y="16">06</text></g>
+              <g class="loop-node" transform="translate(166,213)"><circle r="46"></circle><text y="-4">Refine</text><text class="loop-node-num" y="16">07</text></g>
+            </g>
+            <g class="loop-pulse-rotor" id="loopPulseRotor">
+              <circle class="loop-pulse" cx="400" cy="100" r="8"></circle>
+            </g>
+            <circle class="loop-core" cx="400" cy="400" r="64"></circle>
+            <text class="loop-core-label" x="400" y="396">THE</text>
+            <text class="loop-core-label" x="400" y="414">LOOP</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Expected Capabilities -->
+    <section class="slide s3 slide--bento7" data-transition="cut">
+      <div class="slide-frame bento-frame">
+        <h1 class="r-title editable">What You'll Walk Away With</h1>
+        <div class="r-diagram bento-grid">
+          <div class="bento-tile bento-a"><div class="bento-letter">A</div><div class="bento-name editable">AI Mindset</div></div>
+          <div class="bento-tile bento-b"><div class="bento-letter">B</div><div class="bento-name editable">Session &amp; Resourcing Mechanics</div></div>
+          <div class="bento-tile bento-c"><div class="bento-letter">C</div><div class="bento-name editable">Problem Decomposition</div></div>
+          <div class="bento-tile bento-d"><div class="bento-letter">D</div><div class="bento-name editable">Context Engineering</div></div>
+          <div class="bento-tile bento-e"><div class="bento-letter">E</div><div class="bento-name editable">AI Communication</div></div>
+          <div class="bento-tile bento-f"><div class="bento-letter">F</div><div class="bento-name editable">AI Development Workflow</div></div>
+          <div class="bento-tile bento-g"><div class="bento-letter">G</div><div class="bento-name editable">Verification</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Section Divider 01 -->
+    <section class="slide s4 slide--divider" data-transition="wipe">
+      <div class="divider-numeral">01</div>
+      <div class="divider-num-label editable">Section 01</div>
+      <div class="divider-name editable">Foundations</div>
+      <div class="divider-progress">01 / 06</div>
+    </section>
+
+    <!-- Slide 5: Pilot vs. Copilot -->
+    <section class="slide s5 slide--split-pilot" data-transition="cut">
+      <div class="slide-frame split-frame">
+        <h1 class="r-title editable">Pilot vs. Copilot</h1>
+        <div class="split-body">
+          <div class="split-col pilot r-item">
+            <div class="split-col-label">Engineer / Pilot</div>
+            <ul>
+              <li class="editable">Owns architecture</li>
+              <li class="editable">Owns business logic</li>
+              <li class="editable">Owns security</li>
+              <li class="editable">Owns final review</li>
+            </ul>
+            <div class="split-quote editable">"AI can propose. Engineers decide."</div>
+          </div>
+          <div class="split-col copilot r-item">
+            <div class="split-col-label">AI / Copilot</div>
+            <ul>
+              <li class="editable">Exploration</li>
+              <li class="editable">Proposals</li>
+              <li class="editable">Generation</li>
+              <li class="editable">First-pass review</li>
+            </ul>
+            <div class="split-example">
+              <span class="code-block editable">Build the user management page.</span>
+              <div class="example-note editable">AI silently guesses state, API, pagination, permissions, error handling.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Everything Lives in the Window -->
+    <section class="slide s6 slide--glass" data-transition="cut">
+      <div class="slide-frame glass-frame">
+        <div class="glass-vessel r-diagram">
+          <div class="glass-cap">Context Window</div>
+          <div class="glass-block">TURN 7 <span>- latest</span></div>
+          <div class="glass-block">TURN 6</div>
+          <div class="glass-block">TURN 5</div>
+          <div class="glass-block">TURN 4</div>
+          <div class="glass-block">TURN 3</div>
+          <div class="glass-block">TURN 2</div>
+          <div class="glass-block">TURN 1 <span>- oldest</span></div>
+        </div>
+        <div>
+          <h1 class="r-title editable">Everything Lives in the Window</h1>
+          <p class="r-item glass-quote editable">"If it is not in the window, it does not exist for this response."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: Start Fresh, or Keep Going? -->
+    <section class="slide s7 slide--decision" data-transition="cut">
+      <div class="slide-frame decision-frame">
+        <h1 class="r-title editable">Start Fresh, or Keep Going?</h1>
+        <p class="decision-quote r-item editable">"Session boundaries should track the task, not the clock."</p>
+        <div class="decision-row r-diagram">
+          <div class="decision-gate"><span class="editable">Task category changed?</span></div>
+          <div class="decision-connector"></div>
+          <div class="decision-gate"><span class="editable">Old approach still lingering?</span></div>
+          <div class="decision-connector"></div>
+          <div class="decision-gate"><span class="editable">Iterating one piece of work?</span></div>
+        </div>
+        <div class="decision-endpills r-item">
+          <div class="decision-end fresh editable">&#8592; Start Fresh (/clear)</div>
+          <div class="decision-end keep editable">Keep Going (/compact) &#8594;</div>
+        </div>
+        <div class="decision-code r-item">
+          <span class="code-block editable">/clear   -&gt; blank slate, different task
+/compact -&gt; same task, summarized, more room</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8: Resource by Risk, Not Size -->
+    <section class="slide s8 slide--matrix" data-transition="cut">
+      <div class="slide-frame matrix-frame">
+        <div>
+          <div class="r-kicker editable">RESOURCE MODEL</div>
+          <h1 class="r-title editable">Resource by Risk, Not Size</h1>
+          <p class="matrix-quote r-item editable">"A fast, shallow answer to a hard question looks exactly as confident as a well-reasoned one."</p>
+        </div>
+        <div class="matrix-plot r-diagram">
+          <div class="matrix-axis-label y-top-side">Judgment Required</div>
+          <div class="matrix-axis-label x-left">Small</div>
+          <div class="matrix-axis-label x-right">Large</div>
+          <div class="matrix-quadrants">
+            <div>Small / Low</div><div>Large / Low</div>
+            <div class="q-hi">Small / High</div><div>Large / High</div>
+          </div>
+          <div class="matrix-dot" style="left: 570px; top: 560px;"></div>
+          <div class="matrix-dot-label editable" style="left: 380px; top: 590px;">Rename across files - low effort</div>
+          <div class="matrix-dot" style="left: 90px; top: 80px;"></div>
+          <div class="matrix-dot-label editable" style="left: 108px; top: 40px;">State reconciliation call - high effort</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9: Section Divider 02 -->
+    <section class="slide s9 slide--divider" data-transition="wipe">
+      <div class="divider-numeral">02</div>
+      <div class="divider-num-label editable">Section 02</div>
+      <div class="divider-name editable">Thinking Tools</div>
+      <div class="divider-progress">02 / 06</div>
+    </section>
+
+    <!-- Slide 10: Requirement -> Contract -->
+    <section class="slide s10 slide--pipeline" data-transition="cut">
+      <div class="slide-frame pipeline-frame">
+        <div class="r-kicker editable">PROBLEM DECOMPOSITION</div>
+        <h1 class="r-title editable">Requirement &#8594; Contract, Not Code</h1>
+        <div class="pipeline-row r-diagram" id="pipelineRow10">
+          <div class="pipeline-stage p-first"><div class="p-num">01</div><div class="p-name editable">Requirement</div></div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-stage"><div class="p-num">02</div><div class="p-name editable">Contract</div></div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-stage"><div class="p-num">03</div><div class="p-name editable">Data</div></div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-stage"><div class="p-num">04</div><div class="p-name editable">State</div></div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-stage"><div class="p-num">05</div><div class="p-name editable">Architecture</div></div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-stage"><div class="p-num">06</div><div class="p-name editable">Implementation</div></div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-stage"><div class="p-num">07</div><div class="p-name editable">Verification</div></div>
+        </div>
+        <div class="pipeline-lower">
+          <div class="pipeline-code r-item">
+            <span class="code-block editable">type UserFilter = {
+  keyword: string;
+  roles: Role[];
+  status?: UserStatus;
+};</span>
+          </div>
+          <div class="pipeline-note r-item">
+            <div class="r-kicker">DEPENDENCY GRAPH</div>
+            <p class="editable">Contract = a type, not a sentence. Break into small, ordered, reviewable tasks.</p>
+            <div class="dep-mini">
+              <div class="dep-node accent"></div><div class="dep-line"></div><div class="dep-node"></div>
+              <span class="dep-mini-label">independent &#8594; parallel</span>
+            </div>
+            <div class="dep-mini" style="margin-top:10px;">
+              <div class="dep-node"></div><div class="dep-line"></div><div class="dep-node"></div><div class="dep-line"></div><div class="dep-node"></div>
+              <span class="dep-mini-label">dependent &#8594; sequential</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 11: Good Context Beats a Clever Prompt -->
+    <section class="slide s11 slide--pyramid-context" data-transition="cut">
+      <div class="slide-frame pc-frame">
+        <div class="pc-diagram r-diagram">
+          <svg viewBox="0 0 600 500">
+            <polygon class="pyr-band pyr-band-1" points="300,0 350,100 250,100"></polygon>
+            <polygon class="pyr-band pyr-band-2" points="250,100 350,100 400,200 200,200"></polygon>
+            <polygon class="pyr-band pyr-band-3" points="200,200 400,200 450,300 150,300"></polygon>
+            <polygon class="pyr-band pyr-band-4" points="150,300 450,300 500,400 100,400"></polygon>
+            <polygon class="pyr-band pyr-band-5" points="100,400 500,400 550,500 50,500"></polygon>
+            <text class="pyr-label on-dark" x="300" y="80">Task</text>
+            <text class="pyr-label on-dark" x="300" y="175">Contracts</text>
+            <text class="pyr-label" x="300" y="270">Patterns</text>
+            <text class="pyr-label" x="300" y="365">Related Modules</text>
+            <text class="pyr-label" x="300" y="460">Full Repository</text>
+          </svg>
+        </div>
+        <div class="pc-text">
+          <div class="r-kicker editable">CONTEXT ENGINEERING</div>
+          <h1 class="r-title editable">Good Context Beats a Clever Prompt</h1>
+          <p class="pc-quote r-item editable">"Show AI the pattern instead of describing the pattern."</p>
+          <div class="pc-example r-item">
+            <p class="editable">Avoid: "Our project uses a custom modal."</p>
+            <p class="prefer editable">Prefer: point at OrderFilterModal.tsx directly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 12: The Design Is the Spec -->
+    <section class="slide s12 slide--design-spec" data-transition="cut">
+      <div class="slide-frame ds-frame">
+        <h1 class="r-title editable">The Design Is the Spec</h1>
+        <div class="ds-body">
+          <div class="r-item">
+            <div class="ds-col-label">As prose (lossy)</div>
+            <div class="ds-noise editable">"Rounded corners and a shadow, feels clean and modern."</div>
+          </div>
+          <div class="r-diagram">
+            <div class="ds-col-label">As the frame (exact)</div>
+            <div class="ds-wire">
+              <div class="ds-box ds-header"></div>
+              <div class="ds-box ds-avatar"></div>
+              <div class="ds-box ds-card"></div>
+              <div class="ds-callout c1 editable">radius: 4px</div>
+              <div class="ds-callout c2 editable">gap: 24px</div>
+              <div class="ds-callout c3 editable">shadow: 0 20px 40px</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 13: Context -> Goal -> Constraints -> References -> Output -->
+    <section class="slide s13 slide--stepper-cgcro" data-transition="cut">
+      <div class="slide-frame sc-frame">
+        <h1 class="r-title editable">Context &#8594; Goal &#8594; Constraints &#8594; References &#8594; Output</h1>
+        <div class="sc-rows r-diagram">
+          <div class="sc-row active-row"><div class="sc-label">Context</div><div class="sc-example editable">React, TS, React Query, Zustand.</div></div>
+          <div class="sc-row"><div class="sc-label">Goal</div><div class="sc-example editable">Implement a user filter modal.</div></div>
+          <div class="sc-row"><div class="sc-label">Constraints</div><div class="sc-example editable">No new deps. Use existing DS.</div></div>
+          <div class="sc-row"><div class="sc-label">References</div><div class="sc-example editable">OrderFilterModal.tsx</div></div>
+          <div class="sc-row"><div class="sc-label">Output</div><div class="sc-example editable">Plan only. Do not write code yet.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 14: Section Divider 03 -->
+    <section class="slide s14 slide--divider" data-transition="wipe">
+      <div class="divider-numeral">03</div>
+      <div class="divider-num-label editable">Section 03</div>
+      <div class="divider-name editable">Workflow</div>
+      <div class="divider-progress">03 / 06</div>
+    </section>
+
+    <!-- Slide 15: Analyze -> Plan -> Review -> Implement -->
+    <section class="slide s15 slide--relay" data-transition="cut">
+      <div class="slide-frame relay-frame">
+        <h1 class="r-title editable">Analyze &#8594; Plan &#8594; Review &#8594; Implement</h1>
+        <div class="relay-quote editable">"Analyze -&gt; Plan -&gt; Review -&gt; Implement"</div>
+        <div class="relay-row r-diagram">
+          <div class="relay-stage editable">Analyze</div>
+          <div class="relay-baton"></div>
+          <div class="relay-stage editable">Plan</div>
+          <div class="relay-baton"></div>
+          <div class="relay-stage review editable">Human Review</div>
+          <div class="relay-baton"></div>
+          <div class="relay-stage editable">Implement</div>
+        </div>
+        <div class="relay-curve-wrap r-diagram">
+          <svg viewBox="0 0 1360 200" preserveAspectRatio="none">
+            <path d="M0,170 L340,165 L680,160 L1020,155 L1360,150" fill="none" stroke="#9AA1AC" stroke-width="3"></path>
+            <path d="M680,160 L900,110 L1130,50 L1360,15" fill="none" stroke="#FF5A1F" stroke-width="3" stroke-dasharray="10 8"></path>
+          </svg>
+          <div class="relay-curve-label safe editable">cost stays flat when Review happens</div>
+          <div class="relay-curve-label spike editable">cost to fix spikes if Review is skipped</div>
+        </div>
+        <div class="relay-example r-item">
+          <span class="code-block editable">Analyze this requirement and the existing code.
+Identify: components, patterns, state ownership, edge cases.
+Do not write code.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 16: Generate / Transform / Explain / Discover -->
+    <section class="slide s16 slide--quadrant4" data-transition="cut">
+      <div class="slide-frame q4-frame">
+        <h1 class="r-title editable">Generate, Transform, Explain, Discover</h1>
+        <div class="q4-grid r-diagram">
+          <div class="q4-card pad-tl"><div class="q4-zone">G</div><div class="q4-name editable">Generate</div><div class="q4-tip editable">Best for small, self-contained units.</div></div>
+          <div class="q4-card pad-tr"><div class="q4-zone">T</div><div class="q4-name editable">Transform</div><div class="q4-tip editable">Risk is silent alteration - state what must stay identical.</div></div>
+          <div class="q4-card pad-bl"><div class="q4-zone">E</div><div class="q4-name editable">Explain</div><div class="q4-tip editable">Name the dimension (state flow, timing), not "what does this do."</div></div>
+          <div class="q4-card pad-br"><div class="q4-zone">D</div><div class="q4-name editable">Discover</div><div class="q4-tip editable">Ask AI to find existing patterns before inventing new ones.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 17: Hypotheses Before Fixes -->
+    <section class="slide s17 slide--dual-loop" data-transition="cut">
+      <div class="slide-frame dl-frame">
+        <h1 class="r-title editable">Hypotheses Before Fixes</h1>
+        <div class="dl-row r-diagram">
+          <div class="dl-col good">
+            <div class="dl-label">Hypothesis-Driven Loop</div>
+            <svg viewBox="0 0 600 560">
+              <path class="dl-spiral" d="M300,40 L123,123 L59,300 L137,463 L300,522 L450,450 L503,300 L437,163 L300,116 L177,177 L135,300 L190,410 L300,446 L396,396 L427,300 L383,217 L300,192 L231,231 L211,300 L244,356 L300,370 L342,342 L351,300 L329,271 L300,268"></path>
+            </svg>
+            <div class="dl-caption editable">Problem &#8594; Hypothesis &#8594; Evidence &#8594; Experiment &#8594; Fix &#8594; Verify. Converges.</div>
+          </div>
+          <div class="dl-col bad">
+            <div class="dl-label">Random-Change Loop</div>
+            <svg viewBox="0 0 600 560">
+              <path class="dl-flat" d="M300,60 A240,240 0 1 1 92,420"></path>
+              <path class="dl-deadend" d="M92,420 L48,452"></path>
+            </svg>
+            <div class="dl-caption editable">Guess &#8594; change &#8594; rerun &#8594; guess again. Flat, no evidence, dead ends.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 18: Refactor Is Not "Clean This Up" -->
+    <section class="slide s18 slide--gates3" data-transition="cut">
+      <div class="slide-frame g3-frame">
+        <h1 class="r-title editable">Refactor Is Not "Clean This Up"</h1>
+        <div class="g3-row r-diagram">
+          <div class="g3-gate lit"><div class="g3-lock"><div class="shackle"></div><div class="body"></div><div class="keyhole"></div></div><div class="g3-gate-name editable">Analyze</div></div>
+          <div class="g3-gate-arrow">&#8594;</div>
+          <div class="g3-gate"><div class="g3-lock"><div class="shackle"></div><div class="body"></div><div class="keyhole"></div></div><div class="g3-gate-name editable">Compare</div></div>
+          <div class="g3-gate-arrow">&#8594;</div>
+          <div class="g3-gate"><div class="g3-lock"><div class="shackle"></div><div class="body"></div><div class="keyhole"></div></div><div class="g3-gate-name editable">Refactor Safely</div></div>
+        </div>
+        <div class="g3-example r-item">
+          <span class="code-block editable">Implement approach 1.
+Constraints: preserve behavior, no public API changes,
+no new dependencies, keep the diff minimal.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 19: Ask It to Prove You Wrong -->
+    <section class="slide s19 slide--bubbles" data-transition="cut">
+      <div class="slide-frame bb-frame">
+        <h1 class="r-title editable">Ask It to Prove You Wrong</h1>
+        <div class="bb-bubble bb-weak r-item">
+          <span class="tag bb-weak-tag">Weak</span><br>
+          <span class="editable">"Is this code good?"</span><br><br>
+          <span class="editable" style="color:var(--text-tertiary); font-size:16px;">&#8594; generic agreement. Useless.</span>
+        </div>
+        <div class="bb-bubble bb-strong r-item">
+          <span class="tag accent bb-strong-tag">Strong</span><br>
+          <span class="editable">"Try to prove this implementation is wrong.
+Find inputs, states, or interactions that
+could cause incorrect behavior."</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 20: Generated Code Is Not Verified Code -->
+    <section class="slide s20 slide--verify-pyramid" data-transition="cut">
+      <div class="slide-frame vp-frame">
+        <div>
+          <div class="r-kicker editable">VERIFICATION</div>
+          <h1 class="r-title editable">Generated Code Is Not Verified Code</h1>
+          <p class="vp-quote r-item editable">"Generated code is not verified code."</p>
+          <div class="vp-catch r-item">
+            <div class="vp-catch-row"><span>Human Review</span><span class="editable">catches: intent, taste, tradeoffs</span></div>
+            <div class="vp-catch-row"><span>Runtime</span><span class="editable">catches: loading, empty, slow network</span></div>
+            <div class="vp-catch-row"><span>E2E</span><span class="editable">catches: broken user flows</span></div>
+            <div class="vp-catch-row"><span>Unit Test</span><span class="editable">catches: logic regressions</span></div>
+            <div class="vp-catch-row"><span>Lint</span><span class="editable">catches: convention drift</span></div>
+            <div class="vp-catch-row"><span>Type Check</span><span class="editable">catches: shape mismatches</span></div>
+          </div>
+        </div>
+        <div class="vp-diagram r-diagram">
+          <svg viewBox="0 0 600 500">
+            <polygon class="vp-band vp-band-0" points="300,0 342,83 259,83"></polygon>
+            <polygon class="vp-band vp-band-1" points="259,83 342,83 384,167 217,167"></polygon>
+            <polygon class="vp-band vp-band-2" points="217,167 384,167 425,250 175,250"></polygon>
+            <polygon class="vp-band vp-band-3" points="175,250 425,250 467,333 134,333"></polygon>
+            <polygon class="vp-band vp-band-4" points="134,333 467,333 509,417 92,417"></polygon>
+            <polygon class="vp-band vp-band-5" points="92,417 509,417 550,500 50,500"></polygon>
+            <line class="vp-leader" x1="330" y1="45" x2="415" y2="45"></line>
+            <text class="vp-label vp-label-ext" x="423" y="50">Human Review</text>
+            <text class="vp-label on-dark" x="300" y="148">Runtime</text>
+            <text class="vp-label on-dark" x="300" y="232">E2E</text>
+            <text class="vp-label" x="300" y="315">Unit Test</text>
+            <text class="vp-label" x="300" y="399">Lint</text>
+            <text class="vp-label" x="300" y="470">Type Check</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 21: Section Divider 04 -->
+    <section class="slide s21 slide--divider" data-transition="wipe">
+      <div class="divider-numeral">04</div>
+      <div class="divider-num-label editable">Section 04</div>
+      <div class="divider-name editable">Frontend &amp; Quality</div>
+      <div class="divider-progress">04 / 06</div>
+    </section>
+
+    <!-- Slide 22: Six Frontend-Only Blind Spots -->
+    <section class="slide s22 slide--bento6" data-transition="cut">
+      <div class="slide-frame b6-frame">
+        <h1 class="r-title editable">Six Frontend-Only Blind Spots</h1>
+        <div class="b6-grid r-diagram">
+          <div class="b6-tile b6-hooks">
+            <div class="b6-title editable">Hooks / Dependency Arrays</div>
+            <div class="b6-desc editable">Dependency arrays lie about their contract.</div>
+            <span class="code-block editable">useEffect(() =&gt; {
+  const id = setInterval(fetchData, 30000);
+  return () =&gt; clearInterval(id);
+}, []); // stale closure - dateRange never updates</span>
+          </div>
+          <div class="b6-tile b6-state"><div class="b6-title editable">State Management</div><div class="b6-desc editable">Server state duplicated into global store.</div></div>
+          <div class="b6-tile b6-fetch"><div class="b6-title editable">Data Fetching</div><div class="b6-desc editable">Race conditions from rapid open/close.</div></div>
+          <div class="b6-tile b6-perf"><div class="b6-title editable">Performance</div><div class="b6-desc editable">Unmemoized filters at scale.</div></div>
+          <div class="b6-tile b6-a11y"><div class="b6-title editable">Accessibility</div><div class="b6-desc editable">Modal with no focus trap, no ARIA.</div></div>
+          <div class="b6-tile b6-responsive"><div class="b6-title editable">Responsive</div><div class="b6-desc editable">Fixed-width table breaks on phone.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 23: Coverage Is Not Correctness -->
+    <section class="slide s23 slide--diff" data-transition="cut">
+      <div class="slide-frame diff-frame">
+        <h1 class="r-title editable">Coverage Is Not Correctness</h1>
+        <div class="diff-stack r-diagram">
+          <div class="diff-row bad"><div class="diff-marker">&minus;</div><span class="code-block editable">expect(result).toBeDefined(); // passes even if logic is deleted</span></div>
+          <div class="diff-row good"><div class="diff-marker">+</div><span class="code-block editable">expect(result.total).toBe(180);</span></div>
+        </div>
+        <p class="diff-quote r-item editable">"If I introduced a real bug here, would this test go red?"</p>
+      </div>
+    </section>
+
+    <!-- Slide 24: AI as a Knowledge Tool -->
+    <section class="slide s24 slide--risk-reward" data-transition="cut">
+      <div class="slide-frame rr-frame">
+        <div>
+          <div class="r-kicker editable">KNOWLEDGE TOOL</div>
+          <h1 class="r-title editable">AI as a Knowledge Tool, Not Just a Coder</h1>
+          <p class="r-item editable" style="font-size: var(--size-body); color: var(--text-secondary); max-width: 560px; margin-top: 12px;">Ask what would break if you deleted this. Generate docs from actual exports. Ask what AI could not determine.</p>
+        </div>
+        <div class="rr-plot r-diagram">
+          <div class="rr-axis-label top">High Reward</div>
+          <div class="rr-axis-label bottom">Low Reward</div>
+          <div class="rr-axis-label left-side">High Risk</div>
+          <div class="rr-axis-label right-side">Low Risk</div>
+          <div class="rr-quad"><div></div><div class="best"></div><div></div><div></div></div>
+          <div class="rr-diag"></div>
+          <div class="rr-dot" style="left: 500px; top: 470px;"></div>
+          <div class="rr-dot-label editable" style="left: 300px; top: 500px;">Documentation</div>
+          <div class="rr-dot muted" style="left: 100px; top: 100px;"></div>
+          <div class="rr-dot-label editable" style="left: 108px; top: 60px;">Unreviewed Code-gen</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 25: The Seven Ways This Goes Wrong -->
+    <section class="slide s25 slide--masonry" data-transition="cut">
+      <div class="slide-frame mw-frame">
+        <h1 class="r-title editable">The Seven Ways This Goes Wrong</h1>
+        <div class="mw-columns r-diagram">
+          <div class="mw-col">
+            <div class="mw-card tall"><div class="mw-flag">01</div><div class="mw-name editable">Vague Prompting</div><div class="mw-quote editable">"Make this better."</div></div>
+            <div class="mw-card"><div class="mw-flag">05</div><div class="mw-name editable">AI-Driven Architecture</div><div class="mw-quote editable">"AI suggested Zustand, so..."</div></div>
+          </div>
+          <div class="mw-col">
+            <div class="mw-card short"><div class="mw-flag">02</div><div class="mw-name editable">Premature Coding</div></div>
+            <div class="mw-card tall"><div class="mw-flag">06</div><div class="mw-name editable">Endless Conversation</div><div class="mw-quote editable">One thread, five unrelated tasks.</div></div>
+          </div>
+          <div class="mw-col">
+            <div class="mw-card tall"><div class="mw-flag">03</div><div class="mw-name editable">Context Dumping</div><div class="mw-quote editable">Whole repo, just in case.</div></div>
+            <div class="mw-card short"><div class="mw-flag">07</div><div class="mw-name editable">Over-Automation</div></div>
+          </div>
+          <div class="mw-col">
+            <div class="mw-card"><div class="mw-flag">04</div><div class="mw-name editable">Blind Acceptance</div><div class="mw-quote editable">It compiles. Done.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 26: Section Divider 05 -->
+    <section class="slide s26 slide--divider" data-transition="wipe">
+      <div class="divider-numeral">05</div>
+      <div class="divider-num-label editable">Section 05</div>
+      <div class="divider-name editable">Team Standard</div>
+      <div class="divider-progress">05 / 06</div>
+    </section>
+
+    <!-- Slide 27: The One Loop the Whole Team Runs -->
+    <section class="slide s27 slide--vstepper" data-transition="cut">
+      <div class="slide-frame vs-frame">
+        <div>
+          <div class="r-kicker editable">TEAM STANDARD</div>
+          <h1 class="r-title editable">The One Loop the Whole Team Runs</h1>
+          <p class="vs-caption r-item editable">Merge means a human is willing to put their name on this.</p>
+        </div>
+        <div class="vs-col r-diagram" id="vstepper27">
+          <div class="vs-stage"><div class="vs-dot">01</div><div class="vs-name editable">Requirement</div></div>
+          <div class="vs-stage"><div class="vs-dot">02</div><div class="vs-name editable">Understand</div></div>
+          <div class="vs-stage"><div class="vs-dot">03</div><div class="vs-name editable">Decompose</div></div>
+          <div class="vs-stage"><div class="vs-dot">04</div><div class="vs-name editable">Context</div></div>
+          <div class="vs-stage"><div class="vs-dot">05</div><div class="vs-name editable">Plan</div></div>
+          <div class="vs-stage gate"><div class="vs-dot">&#9679;</div><div class="vs-name editable">Human Review</div></div>
+          <div class="vs-stage"><div class="vs-dot">07</div><div class="vs-name editable">Implement</div></div>
+          <div class="vs-stage"><div class="vs-dot">08</div><div class="vs-name editable">Verify</div></div>
+          <div class="vs-branch">
+            <div class="vs-chip editable">Type</div><div class="vs-chip editable">Test</div><div class="vs-chip editable">Runtime</div>
+          </div>
+          <div class="vs-merge-note editable">3 lanes run in parallel, then rejoin</div>
+          <div class="vs-stage"><div class="vs-dot">09</div><div class="vs-name editable">AI Review</div></div>
+          <div class="vs-stage gate"><div class="vs-dot">&#9679;</div><div class="vs-name editable">Human Review</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 28: Ten Rules, One Team -->
+    <section class="slide s28 slide--marquee" data-transition="cut">
+      <div class="r-kicker editable">TEAM CODING STANDARD</div>
+      <h1 class="r-title editable">Ten Rules, One Team</h1>
+      <div class="slide-frame mq-frame">
+        <div class="mq-track-wrap">
+          <div class="mq-track r-diagram" id="marqueeTrack28">
+            <div class="mq-set">
+              <span class="mq-item"><span class="mq-num">01</span><span class="mq-text">AI doesn't decide <em>architecture</em> alone</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">02</span><span class="mq-text">Non-trivial tasks get <em>planned</em> first</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">03</span><span class="mq-text">Use existing <em>patterns</em> first</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">04</span><span class="mq-text">Minimum sufficient <em>context</em></span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">05</span><span class="mq-text">Keep changes small and <em>reviewable</em></span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">06</span><span class="mq-text">Never trust <em>unverified</em> code</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">07</span><span class="mq-text">No new <em>dependencies</em> without reason</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">08</span><span class="mq-text"><em>Requirements</em> outrank AI output</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">09</span><span class="mq-text">Existing <em>code</em> beats text description</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">10</span><span class="mq-text">The <em>engineer</em> owns the result</span></span>
+              <span class="mq-sep">&#9670;</span>
+            </div>
+            <div class="mq-set" aria-hidden="true">
+              <span class="mq-item"><span class="mq-num">01</span><span class="mq-text">AI doesn't decide <em>architecture</em> alone</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">02</span><span class="mq-text">Non-trivial tasks get <em>planned</em> first</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">03</span><span class="mq-text">Use existing <em>patterns</em> first</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">04</span><span class="mq-text">Minimum sufficient <em>context</em></span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">05</span><span class="mq-text">Keep changes small and <em>reviewable</em></span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">06</span><span class="mq-text">Never trust <em>unverified</em> code</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">07</span><span class="mq-text">No new <em>dependencies</em> without reason</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">08</span><span class="mq-text"><em>Requirements</em> outrank AI output</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">09</span><span class="mq-text">Existing <em>code</em> beats text description</span></span>
+              <span class="mq-sep">&#9670;</span>
+              <span class="mq-item"><span class="mq-num">10</span><span class="mq-text">The <em>engineer</em> owns the result</span></span>
+              <span class="mq-sep">&#9670;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 29: Section Divider 06 -->
+    <section class="slide s29 slide--divider" data-transition="wipe">
+      <div class="divider-numeral">06</div>
+      <div class="divider-num-label editable">Section 06</div>
+      <div class="divider-name editable">Playbooks &amp; Beyond</div>
+      <div class="divider-progress">06 / 06</div>
+    </section>
+
+    <!-- Slide 30: A Recipe for Every Situation (deliberate uniform grid) -->
+    <section class="slide s30 slide--grid9" data-transition="cut">
+      <div class="slide-frame g9-frame">
+        <h1 class="r-title editable">A Recipe for Every Situation</h1>
+        <div class="g9-grid r-diagram">
+          <div class="g9-card"><div class="g9-title editable">New Feature</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Migrating Code</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Debugging</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Updating Existing Code</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Docs &#8594; Code</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Using a Skill</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Dividing Work w/ Sub-Agents</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Managing a Session</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+          <div class="g9-card"><div class="g9-title editable">Prompt Quick Reference</div><div class="g9-shape"><span>Steps</span><span>Watch-outs</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 31: Beyond Your Own Session -->
+    <section class="slide s31 slide--stack" data-transition="cut">
+      <div class="slide-frame st-frame">
+        <div class="r-kicker editable">ADVANCED TRACK</div>
+        <h1 class="r-title editable">Beyond Your Own Session</h1>
+        <div class="st-bands r-diagram">
+          <div class="st-band base">
+            <div class="st-band-label">Session</div>
+            <div class="st-items">
+              <div class="st-item editable">Your prompts</div>
+              <div class="st-item editable">Your context choices</div>
+              <div class="st-item editable">Your review habits</div>
+            </div>
+          </div>
+          <div class="st-band top">
+            <div class="st-arrow-col">&#8593; &#8593; &#8593;</div>
+            <div class="st-band-label">Shared</div>
+            <div class="st-items">
+              <div class="st-item editable">CLAUDE.md (always-on)</div>
+              <div class="st-item editable">Skills (on-demand)</div>
+              <div class="st-item editable">Subagents</div>
+              <div class="st-item editable">Hooks</div>
+            </div>
+          </div>
+        </div>
+        <p class="st-caption r-item editable">Rule = costs context every turn but guaranteed seen. Skill = free until invoked but must be discoverable.</p>
+      </div>
+    </section>
+
+    <!-- Slide 32: The Five Things to Remember -->
+    <section class="slide s32 slide--numbered-stack" data-transition="dissolve">
+      <div class="slide-frame ns-frame">
+        <div class="r-kicker editable">CLOSING</div>
+        <h1 class="r-title editable" style="font-size: var(--size-h2); margin-bottom: 40px; color: var(--text-secondary);">The Five Things to Remember</h1>
+        <div class="ns-line r-item"><span class="ns-num">01</span><span class="ns-text editable">AI doesn't know your codebase unless you show it.</span></div>
+        <div class="ns-line r-item"><span class="ns-num">02</span><span class="ns-text editable">Don't ask AI to solve a problem you haven't decomposed.</span></div>
+        <div class="ns-line r-item"><span class="ns-num">03</span><span class="ns-text editable">Plan before coding when the task is non-trivial.</span></div>
+        <div class="ns-line r-item"><span class="ns-num">04</span><span class="ns-text editable">Give AI patterns, not just instructions.</span></div>
+        <div class="ns-line r-item"><span class="ns-num">05</span><span class="ns-text editable">Never trust generated code without verification.</span></div>
+      </div>
+    </section>
+
+    <!-- Slide 33: The Actual Goal -->
+    <section class="slide s33 slide--final-quote" data-transition="dissolve">
+      <div class="fq-frame">
+        <div class="fq-mark">&#8220;</div>
+        <p class="r-title fq-text editable">The goal of AI-assisted development is not to make AI write more code.<br>The goal is to help <em>engineers deliver correct, maintainable software faster.</em></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Deck chrome: progress dots, outside the 16:9 stage -->
+<nav class="deck-controls" aria-label="Slide progress">
+  <div class="dot-rail" id="dotRail"></div>
+</nav>
+
+<!-- Table of contents: sticky glass button + slide-out drawer -->
+<button class="toc-toggle" id="tocToggle" aria-label="Open table of contents" aria-expanded="false" title="Table of contents">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+    <line x1="4" y1="7" x2="20" y2="7"></line>
+    <line x1="4" y1="12" x2="20" y2="12"></line>
+    <line x1="4" y1="17" x2="14" y2="17"></line>
+  </svg>
+</button>
+<div class="toc-backdrop" id="tocBackdrop"></div>
+<aside class="toc-drawer" id="tocDrawer" aria-label="Table of contents">
+  <div class="toc-drawer-head">
+    <span class="toc-drawer-title">Contents</span>
+    <button class="toc-close" id="tocClose" aria-label="Close table of contents">&times;</button>
+  </div>
+  <nav class="toc-list" id="tocList"></nav>
+</aside>
+
+<!-- Inline editing affordance -->
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">&#9998;</button>
+<div class="edit-mode-banner" id="editBanner">Edit mode on. Click text to edit. Press E to exit.</div>
+
+<script>
+/* =========================================================
+   SLIDE PRESENTATION CONTROLLER
+   Handles stage scaling, navigation, and GSAP-driven
+   slide-switch + content-reveal choreography.
+   ========================================================= */
+(function () {
+  gsap.registerPlugin(); // no ScrollTrigger needed; deck advances on click/key, not scroll
+  // many slides intentionally omit one or more r-kicker/r-item/r-diagram targets;
+  // that's expected per-slide variance, not an error, so silence GSAP's null-target warning.
+  gsap.config({ nullTargetWarn: false });
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Transition mode required to ARRIVE at each slide index (0-based), per DESIGN.md Section 7.
+  var TRANSITIONS = [
+    'cut', 'cut', 'cut', 'wipe', 'cut', 'cut', 'cut', 'cut', 'wipe', 'cut',
+    'cut', 'cut', 'cut', 'wipe', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut',
+    'wipe', 'cut', 'cut', 'cut', 'cut', 'wipe', 'cut', 'cut', 'wipe', 'cut',
+    'cut', 'dissolve', 'dissolve'
+  ];
+
+  var SlidePresentation = (function () {
+    function SlidePresentation() {
+      this.slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+      this.total = this.slides.length;
+      this.currentIndex = 0;
+      this.isAnimating = false;
+      this.stage = document.getElementById('deckStage');
+      this.wipePanel = document.getElementById('wipePanel');
+      this.dotRail = document.getElementById('dotRail');
+
+      this.buildDots();
+      this.setupStageScale();
+      this.setupKeyboardNav();
+      this.setupWheelNav();
+      this.setupTouchNav();
+      this.initFirstSlide();
+    }
+
+    /* Build the progress dot rail (outside the 16:9 stage) */
+    SlidePresentation.prototype.buildDots = function () {
+      var self = this;
+      this.dots = [];
+      this.slides.forEach(function (slide, i) {
+        var dot = document.createElement('button');
+        dot.className = 'dot' + (slide.classList.contains('slide--divider') ? ' is-divider' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', function () { self.goToSlide(i); });
+        self.dotRail.appendChild(dot);
+        self.dots.push(dot);
+      });
+    };
+
+    SlidePresentation.prototype.updateDots = function () {
+      this.dots.forEach(function (dot, i) {
+        dot.classList.toggle('is-active', i === this.currentIndex);
+      }, this);
+    };
+
+    /* Scale the fixed 1920x1080 stage uniformly to fit the viewport */
+    SlidePresentation.prototype.setupStageScale = function () {
+      var stage = this.stage;
+      function scale() {
+        var factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        var x = (window.innerWidth - 1920 * factor) / 2;
+        var y = (window.innerHeight - 1080 * factor) / 2;
+        stage.style.transform = 'translate(' + x + 'px, ' + y + 'px) scale(' + factor + ')';
+      }
+      scale();
+      window.addEventListener('resize', scale);
+    };
+
+    SlidePresentation.prototype.setupKeyboardNav = function () {
+      var self = this;
+      document.addEventListener('keydown', function (e) {
+        if (e.target && e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+          e.preventDefault(); self.goNext();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+          e.preventDefault(); self.goPrev();
+        }
+      });
+    };
+
+    SlidePresentation.prototype.setupWheelNav = function () {
+      var self = this;
+      var locked = false;
+      window.addEventListener('wheel', function (e) {
+        if (locked) return;
+        if (Math.abs(e.deltaY) < 24) return;
+        locked = true;
+        if (e.deltaY > 0) self.goNext(); else self.goPrev();
+        setTimeout(function () { locked = false; }, 650);
+      }, { passive: true });
+    };
+
+    SlidePresentation.prototype.setupTouchNav = function () {
+      var self = this;
+      var startX = 0, startY = 0;
+      window.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+      }, { passive: true });
+      window.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - startX;
+        var dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx < 0) self.goNext(); else self.goPrev();
+        }
+      }, { passive: true });
+    };
+
+    SlidePresentation.prototype.initFirstSlide = function () {
+      var first = this.slides[0];
+      first.classList.add('active', 'visible');
+      this.updateDots();
+      if (reduceMotion) {
+        applyReducedMotionState(first);
+      } else {
+        prepareContent(first);
+        buildContentTimeline(first).play();
+      }
+    };
+
+    SlidePresentation.prototype.goNext = function () {
+      if (this.currentIndex < this.total - 1) this.goToSlide(this.currentIndex + 1);
+    };
+    SlidePresentation.prototype.goPrev = function () {
+      if (this.currentIndex > 0) this.goToSlide(this.currentIndex - 1);
+    };
+
+    /* Core slide-switch choreography: Cut / Wipe / Dissolve. DESIGN.md Section 4.1 */
+    SlidePresentation.prototype.goToSlide = function (nextIndex) {
+      if (this.isAnimating || nextIndex === this.currentIndex || nextIndex < 0 || nextIndex >= this.total) return;
+      var self = this;
+      var from = this.slides[this.currentIndex];
+      var to = this.slides[nextIndex];
+      var mode = TRANSITIONS[nextIndex] || 'cut';
+
+      this.isAnimating = true;
+
+      if (reduceMotion) {
+        gsap.set(from, { clearProps: 'all' });
+        gsap.set(to, { clearProps: 'all' });
+        from.classList.remove('active', 'visible');
+        to.classList.add('active', 'visible');
+        this.currentIndex = nextIndex;
+        this.updateDots();
+        applyReducedMotionState(to);
+        this.isAnimating = false;
+        return;
+      }
+
+      // Hide the incoming slide's content NOW, before it's visible, so the
+      // slide-switch and the content reveal read as one continuous motion
+      // instead of "slide pops in fully formed, then flickers and re-reveals."
+      prepareContent(to);
+
+      var tl = gsap.timeline({
+        defaults: { ease: 'expo.out' },
+        onComplete: function () {
+          from.classList.remove('active', 'visible');
+          gsap.set(from, { clearProps: 'all' });
+          self.isAnimating = false;
+        }
+      });
+
+      // Content reveal fires as its OWN independent timeline via tl.call() --
+      // NOT tl.add() -- so it can overlap the slide-switch visually without
+      // making `tl` (which gates isAnimating) wait for slow decorative loops
+      // like the loop-diagram rotor spin or the marquee to finish.
+      if (mode === 'cut') {
+        gsap.set(to, { autoAlpha: 0, scale: 1.04, y: 24 });
+        to.classList.add('active', 'visible');
+        tl.to(from, { autoAlpha: 0, scale: 0.97, y: -16, duration: 0.5 }, 0)
+          .to(to,   { autoAlpha: 1, scale: 1,    y: 0,   duration: 0.6 }, 0.08)
+          .call(function () { buildContentTimeline(to); }, null, 0.32);
+
+      } else if (mode === 'wipe') {
+        var panel = self.wipePanel;
+        to.classList.add('active', 'visible');
+        gsap.set(to, { autoAlpha: 0 });
+        gsap.set(panel, { xPercent: -100, autoAlpha: 1 });
+        tl.to(panel, { xPercent: 0, duration: 0.45, ease: 'power4.in' })
+          .set(from, { autoAlpha: 0 })
+          .set(to, { autoAlpha: 1 })
+          .call(function () { buildContentTimeline(to); })
+          .to(panel, { xPercent: 100, duration: 0.55, ease: 'power4.out' }, '<')
+          .set(panel, { xPercent: -100, autoAlpha: 0 });
+
+      } else if (mode === 'dissolve') {
+        gsap.set(to, { autoAlpha: 0, filter: 'blur(16px)' });
+        to.classList.add('active', 'visible');
+        tl.to(from, { autoAlpha: 0, filter: 'blur(20px)', duration: 0.9 }, 0)
+          .to(to,   { autoAlpha: 1, filter: 'blur(0px)',  duration: 1.1 }, 0.2)
+          .call(function () { buildContentTimeline(to); }, null, 0.65);
+      }
+
+      this.currentIndex = nextIndex;
+      this.updateDots();
+    };
+
+    return SlidePresentation;
+  }());
+
+  /* =========================================================
+     PER-SLIDE CONTENT REVEAL -- prepare/reveal split
+     `prepareContent` hides a slide's content INSTANTLY, before it
+     becomes visible. `buildContentTimeline` returns a GSAP timeline
+     that reveals it. Splitting these lets goToSlide() nest the
+     reveal timeline directly into the slide-switch timeline (see
+     Section 4.1) so the switch and the reveal read as one continuous
+     motion, instead of "slide pops in fully formed, THEN its own
+     content flickers invisible and re-reveals" -- the double-motion
+     that made chapter transitions feel unsmooth.
+     ========================================================= */
+  function prepareContent(slideEl) {
+    gsap.set(slideEl.querySelectorAll('.r-kicker'),  { autoAlpha: 0, y: 12 });
+    gsap.set(slideEl.querySelectorAll('.r-title'),   { autoAlpha: 0, y: 28 });
+    gsap.set(slideEl.querySelectorAll('.r-item'),    { autoAlpha: 0, y: 20 });
+    gsap.set(slideEl.querySelectorAll('.r-diagram'), { autoAlpha: 0, scale: 0.94 });
+    prepareSignatureAnimation(slideEl);
+  }
+
+  function buildContentTimeline(slideEl) {
+    var tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    tl.to(slideEl.querySelectorAll('.r-kicker'),  { autoAlpha: 1, y: 0, duration: 0.5 })
+      .to(slideEl.querySelectorAll('.r-title'),   { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.3')
+      .to(slideEl.querySelectorAll('.r-item'),    { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.08 }, '-=0.35')
+      .to(slideEl.querySelectorAll('.r-diagram'), { autoAlpha: 1, scale: 1, duration: 0.6 }, '-=0.3');
+    addSignatureReveal(slideEl, tl);
+    return tl;
+  }
+
+  /* Static end-state only (no hide-then-reveal choreography) for prefers-reduced-motion. */
+  function applyReducedMotionState(slideEl) {
+    var track = slideEl.querySelector('#marqueeTrack28');
+    if (track) stopMarqueeStatic(track);
+  }
+
+  /* =========================================================
+     SIGNATURE COMPONENT ANIMATIONS (DESIGN.md Section 4.3)
+     Same prepare/reveal split as above, for the loop diagram,
+     the two pipeline reveals, and the rule marquee.
+     ========================================================= */
+  function prepareSignatureAnimation(slideEl) {
+    if (slideEl.classList.contains('slide--loop')) {
+      var ring = slideEl.querySelector('#loopRingDraw');
+      if (ring) {
+        var circumference = 2 * Math.PI * 300;
+        gsap.set(ring, { strokeDasharray: circumference, strokeDashoffset: circumference });
+        gsap.set(slideEl.querySelectorAll('.loop-node'), { autoAlpha: 0, scale: 0.5, transformOrigin: 'center' });
+        gsap.set(slideEl.querySelector('#loopPulseRotor'), { rotation: 0 });
+      }
+    }
+    if (slideEl.classList.contains('slide--pipeline')) {
+      preparePipeline(slideEl.querySelectorAll('#pipelineRow10 .pipeline-stage'), slideEl.querySelectorAll('#pipelineRow10 .pipeline-connector'));
+    }
+    if (slideEl.classList.contains('slide--vstepper')) {
+      gsap.set(slideEl.querySelectorAll('#vstepper27 > *'), { autoAlpha: 0, x: -14 });
+    }
+    // the marquee needs no pre-hide; it only starts its loop in the reveal phase.
+  }
+
+  function preparePipeline(stages, connectors) {
+    if (!stages.length) return;
+    gsap.set(connectors, { scaleX: 0, transformOrigin: 'left center' });
+    gsap.set(stages, { autoAlpha: 0, y: 16 });
+  }
+
+  function addSignatureReveal(slideEl, tl) {
+    if (slideEl.classList.contains('slide--loop')) {
+      var ring = slideEl.querySelector('#loopRingDraw');
+      if (ring) {
+        var nodes = slideEl.querySelectorAll('.loop-node');
+        var rotor = slideEl.querySelector('#loopPulseRotor');
+        var sub = gsap.timeline();
+        sub.to(nodes, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.09, ease: 'back.out(2)' })
+           .to(ring, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, '-=0.2')
+           .to(rotor, { rotation: 360, duration: 2.2, ease: 'none', transformOrigin: '400px 400px' }, '-=0.1');
+        tl.add(sub, 0.15);
+      }
+    }
+    if (slideEl.classList.contains('slide--pipeline')) {
+      addPipelineReveal(tl, slideEl.querySelectorAll('#pipelineRow10 .pipeline-stage'), slideEl.querySelectorAll('#pipelineRow10 .pipeline-connector'), 0.1);
+    }
+    if (slideEl.classList.contains('slide--vstepper')) {
+      var rows = slideEl.querySelectorAll('#vstepper27 > *');
+      if (rows.length) {
+        var sub2 = gsap.timeline();
+        sub2.to(rows, { autoAlpha: 1, x: 0, duration: 0.32, ease: 'power2.out', stagger: 0.09 });
+        tl.add(sub2, 0.1);
+      }
+    }
+    if (slideEl.classList.contains('slide--marquee')) {
+      var track = slideEl.querySelector('#marqueeTrack28');
+      if (track) tl.call(function () { startMarquee(track); }, null, 0);
+    }
+  }
+
+  /* Slides 10 and 27: stages reveal in sequence, each connector draws before the next stage fades in. */
+  function addPipelineReveal(tl, stages, connectors, offset) {
+    if (!stages.length) return;
+    var sub = gsap.timeline();
+    stages.forEach(function (stage, i) {
+      sub.to(stage, { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power2.out' });
+      if (connectors[i]) sub.to(connectors[i], { scaleX: 1, duration: 0.25, ease: 'power1.inOut' });
+    });
+    tl.add(sub, offset);
+  }
+
+  /* Slide 28: the deck's single continuous marquee. Stops entirely under reduced motion. */
+  var marqueeTween = null;
+  function startMarquee(track) {
+    if (marqueeTween) { marqueeTween.kill(); marqueeTween = null; }
+    gsap.set(track, { xPercent: 0 });
+    marqueeTween = gsap.to(track, { xPercent: -50, duration: 26, ease: 'none', repeat: -1 });
+  }
+  function stopMarqueeStatic(track) {
+    if (marqueeTween) { marqueeTween.kill(); marqueeTween = null; }
+    // static single frame: hide the duplicate set, no loop
+    var dup = track.querySelectorAll('.mq-set')[1];
+    if (dup) dup.style.display = 'none';
+    gsap.set(track, { xPercent: 0 });
+  }
+
+  /* =========================================================
+     INLINE EDITING
+     Hover-hotzone (400ms grace) + E key. Autosaves to localStorage.
+     JS-driven visibility only -- never the CSS ~ sibling approach.
+     ========================================================= */
+  var InlineEditor = (function () {
+    function InlineEditor() {
+      this.isActive = false;
+      this.storageKey = 'ai-fe-deck-edits-v1';
+      this.toggleBtn = document.getElementById('editToggle');
+      this.hotzone = document.getElementById('editHotzone');
+      this.banner = document.getElementById('editBanner');
+      this.hideTimeout = null;
+      this.assignIds();
+      this.applySaved();
+      this.bindEvents();
+    }
+
+    /* Assign a stable data-edit-id to every editable node, scoped by slide index */
+    InlineEditor.prototype.assignIds = function () {
+      var slides = document.querySelectorAll('.slide');
+      slides.forEach(function (slide, si) {
+        var editables = slide.querySelectorAll('.editable');
+        editables.forEach(function (el, ei) {
+          el.dataset.editId = 's' + si + '-e' + ei;
+        });
+      });
+    };
+
+    InlineEditor.prototype.applySaved = function () {
+      var saved = this.readStore();
+      Object.keys(saved).forEach(function (id) {
+        var el = document.querySelector('[data-edit-id="' + id + '"]');
+        if (el) el.innerHTML = saved[id];
+      });
+    };
+
+    InlineEditor.prototype.readStore = function () {
+      try { return JSON.parse(localStorage.getItem(this.storageKey)) || {}; }
+      catch (e) { return {}; }
+    };
+
+    InlineEditor.prototype.saveNode = function (el) {
+      var store = this.readStore();
+      store[el.dataset.editId] = el.innerHTML;
+      localStorage.setItem(this.storageKey, JSON.stringify(store));
+    };
+
+    InlineEditor.prototype.toggleEditMode = function () {
+      this.isActive = !this.isActive;
+      var editables = document.querySelectorAll('.editable');
+      var self = this;
+      editables.forEach(function (el) {
+        el.setAttribute('contenteditable', self.isActive ? 'true' : 'false');
+      });
+      this.toggleBtn.classList.toggle('active', this.isActive);
+      this.banner.classList.toggle('show', this.isActive);
+      if (this.isActive) this.toggleBtn.classList.add('show');
+    };
+
+    InlineEditor.prototype.bindEvents = function () {
+      var self = this;
+
+      // 1. Click handler on the toggle button
+      this.toggleBtn.addEventListener('click', function () { self.toggleEditMode(); });
+
+      // 2. Hotzone hover with 400ms grace period (JS-driven, not CSS ~ sibling)
+      this.hotzone.addEventListener('mouseenter', function () {
+        clearTimeout(self.hideTimeout);
+        self.toggleBtn.classList.add('show');
+      });
+      this.hotzone.addEventListener('mouseleave', function () {
+        self.hideTimeout = setTimeout(function () {
+          if (!self.isActive) self.toggleBtn.classList.remove('show');
+        }, 400);
+      });
+      this.toggleBtn.addEventListener('mouseenter', function () { clearTimeout(self.hideTimeout); });
+      this.toggleBtn.addEventListener('mouseleave', function () {
+        self.hideTimeout = setTimeout(function () {
+          if (!self.isActive) self.toggleBtn.classList.remove('show');
+        }, 400);
+      });
+
+      // 3. Hotzone direct click
+      this.hotzone.addEventListener('click', function () { self.toggleEditMode(); });
+
+      // 4. Keyboard shortcut (E), skipped while typing inside an editable node
+      document.addEventListener('keydown', function (e) {
+        var typing = e.target && e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true';
+        if ((e.key === 'e' || e.key === 'E') && !typing) self.toggleEditMode();
+      });
+
+      // Autosave on input, debounced per element
+      document.addEventListener('input', function (e) {
+        if (!e.target.classList || !e.target.classList.contains('editable')) return;
+        clearTimeout(e.target._saveTimer);
+        e.target._saveTimer = setTimeout(function () { self.saveNode(e.target); }, 300);
+      });
+    };
+
+    return InlineEditor;
+  }());
+
+  /* =========================================================
+     TABLE OF CONTENTS -- sticky glass button + slide-out drawer
+     One entry per slide, in deck order; `section: true` entries
+     render as a non-interactive section heading in the list.
+     ========================================================= */
+  var TOC = [
+    { title: 'Title' },
+    { title: 'Training Objective' },
+    { title: 'Expected Capabilities' },
+    { title: 'Foundations', section: true },
+    { title: 'Pilot vs. Copilot' },
+    { title: 'Everything Lives in the Window' },
+    { title: 'Start Fresh, or Keep Going?' },
+    { title: 'Resource by Risk, Not Size' },
+    { title: 'Thinking Tools', section: true },
+    { title: 'Requirement → Contract' },
+    { title: 'Good Context Beats a Clever Prompt' },
+    { title: 'The Design Is the Spec' },
+    { title: 'Context → Goal → Constraints → References → Output' },
+    { title: 'Workflow', section: true },
+    { title: 'Analyze → Plan → Review → Implement' },
+    { title: 'Generate, Transform, Explain, Discover' },
+    { title: 'Hypotheses Before Fixes' },
+    { title: 'Refactor Is Not "Clean This Up"' },
+    { title: 'Ask It to Prove You Wrong' },
+    { title: 'Generated Code Is Not Verified Code' },
+    { title: 'Frontend & Quality', section: true },
+    { title: 'Six Frontend-Only Blind Spots' },
+    { title: 'Coverage Is Not Correctness' },
+    { title: 'AI as a Knowledge Tool' },
+    { title: 'The Seven Ways This Goes Wrong' },
+    { title: 'Team Standard', section: true },
+    { title: 'The One Loop the Whole Team Runs' },
+    { title: 'Ten Rules, One Team' },
+    { title: 'Playbooks & Beyond', section: true },
+    { title: 'A Recipe for Every Situation' },
+    { title: 'Beyond Your Own Session' },
+    { title: 'The Five Things to Remember' },
+    { title: 'The Actual Goal' }
+  ];
+
+  var TocController = (function () {
+    function TocController(deck) {
+      this.deck = deck;
+      this.toggle = document.getElementById('tocToggle');
+      this.backdrop = document.getElementById('tocBackdrop');
+      this.drawer = document.getElementById('tocDrawer');
+      this.closeBtn = document.getElementById('tocClose');
+      this.list = document.getElementById('tocList');
+      this.isOpen = false;
+      this.items = [];
+      this.buildList();
+      this.bindEvents();
+    }
+
+    TocController.prototype.buildList = function () {
+      var self = this;
+      TOC.forEach(function (entry, i) {
+        if (entry.section) {
+          var heading = document.createElement('div');
+          heading.className = 'toc-section';
+          heading.textContent = entry.title;
+          self.list.appendChild(heading);
+          return;
+        }
+        var btn = document.createElement('button');
+        btn.className = 'toc-item';
+        btn.innerHTML = '<span class="toc-num">' + String(i + 1).padStart(2, '0') + '</span><span>' + entry.title + '</span>';
+        btn.addEventListener('click', function () {
+          self.deck.goToSlide(i);
+          self.close();
+        });
+        self.list.appendChild(btn);
+        self.items.push({ index: i, el: btn });
+      });
+    };
+
+    TocController.prototype.setActive = function (index) {
+      this.items.forEach(function (item) {
+        item.el.classList.toggle('is-active', item.index === index);
+      });
+    };
+
+    TocController.prototype.open = function () {
+      this.isOpen = true;
+      this.setActive(this.deck.currentIndex);
+      this.backdrop.classList.add('show');
+      this.toggle.setAttribute('aria-expanded', 'true');
+      if (reduceMotion) { gsap.set(this.drawer, { x: 0 }); }
+      else { gsap.to(this.drawer, { x: 0, duration: 0.5, ease: 'expo.out' }); }
+    };
+
+    TocController.prototype.close = function () {
+      this.isOpen = false;
+      this.toggle.setAttribute('aria-expanded', 'false');
+      this.backdrop.classList.remove('show');
+      if (reduceMotion) { gsap.set(this.drawer, { x: '100%' }); }
+      else { gsap.to(this.drawer, { x: '100%', duration: 0.4, ease: 'expo.in' }); }
+    };
+
+    TocController.prototype.bindEvents = function () {
+      var self = this;
+      this.toggle.addEventListener('click', function () { self.isOpen ? self.close() : self.open(); });
+      this.closeBtn.addEventListener('click', function () { self.close(); });
+      this.backdrop.addEventListener('click', function () { self.close(); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && self.isOpen) self.close();
+      });
+    };
+
+    return TocController;
+  }());
+
+  document.addEventListener('DOMContentLoaded', function () {
+    new InlineEditor();
+    var deck = new SlidePresentation();
+    new TocController(deck);
+  });
+}());
+</script>
+</body>
+</html>
