@@ -11,7 +11,7 @@ This file is the design system this deck (and any future deck for this curriculu
 
 **Format:** fixed 16:9 stage, 1920×1080, single self-contained HTML file (per `frontend-slides` architecture). Click/arrow-key driven, not scroll-driven — GSAP is used for slide-switch choreography and in-slide reveal sequencing, not `ScrollTrigger` pin/scrub (there is no scroll).
 
-**Density mode:** speaker-led / low-density. One idea per slide, large type, generous negative space, presenter fills the gaps live.
+**Density mode:** speaker-led / low-density for the 33 original concept slides. A second, deliberately denser beat — the Case Study system (Section 7b) — was added on top to carry real-world examples and best-practice takeaways without touching the original slides' spacing or layouts.
 
 ---
 
@@ -23,7 +23,7 @@ This file is the design system this deck (and any future deck for this curriculu
 | `MOTION_INTENSITY` | **7** | Advanced choreography tier — every slide transition and every content reveal is GSAP-timed, staggered, eased. Not static, not chaotic. |
 | `VISUAL_DENSITY` | **4** | Art-gallery spacing. `120px` slide margins, one focal idea per slide, never more than ~5 text elements on screen at once. |
 
-These are locked. Do not drift toward centered symmetry, toward flat CSS-transition-only motion, or toward denser slides as the deck grows — variance/motion/density hold constant from slide 1 to slide 34.
+These are locked. Do not drift toward centered symmetry, toward flat CSS-transition-only motion, or toward denser slides as the deck grows — variance/motion/density hold constant from slide 1 to slide 33.
 
 ---
 
@@ -46,7 +46,7 @@ One accent, used identically everywhere it appears (Color Consistency Lock). No 
   --text-tertiary:  #5C6270;
 
   /* The one signal color. Warm orange — reads as "alert / active / alive"
-     without touching the purple-blue AI cliche. Locked across all 34 slides. */
+     without touching the purple-blue AI cliche. Locked across all 33 slides. */
   --accent:        #FF5A1F;
   --accent-soft:   rgba(255, 90, 31, 0.14);   /* tinted backgrounds, never a flat fill */
   --accent-line:   rgba(255, 90, 31, 0.45);   /* accent borders/underlines */
@@ -166,11 +166,11 @@ Every timeline above checks `reduceMotion` first and short-circuits to an instan
 ## 5. Anti-Slop Checklist (adapted from the taste skill for a slide-deck context)
 
 - [ ] Zero em-dashes anywhere on any slide (headlines, captions, code comments, quotes).
-- [ ] One accent color (`--accent`) used identically on all 34 slides — no drifting to a second "status" color.
+- [ ] One accent color (`--accent`) used identically on all 33 slides — no drifting to a second "status" color.
 - [ ] One corner-radius system (4px panels / full-pill tags) — no mixed radii.
 - [ ] No centered-hero-with-bullet-list slide anywhere (the exact pattern the brief bans). Every content slide is asymmetric, split, diagrammatic, or a full-bleed statement — never "headline centered, bullets centered below."
 - [ ] No default drop shadows (`box-shadow: 0 4px 6px rgba(0,0,0,0.1)` Bootstrap-card style). Elevation = tinted dark shadow (`rgba(0,0,0,0.4-0.6)`, larger blur, low spread) or a hairline border, never a soft gray card shadow.
-- [ ] No layout family repeats twice anywhere in the deck (enforced in Section 7's table — check the "Layout family" column for duplicates before build).
+- [ ] No layout family repeats twice anywhere in the deck (enforced in Section 7's table — check the "Layout family" column for duplicates before build), **except** the two deliberate repeating systems: the 6 section dividers (Full-bleed Numeral) and the 15 Case Study slides (Section 7b) — both are systems with a fixed narrative job, not competing content layouts.
 - [ ] No 3-equal-column generic feature-card row. Grids are asymmetric (bento-style, mixed cell sizes) wherever a grid is used.
 - [ ] No section-number eyebrows like "01 / 06" pasted above every title. Section numerals appear ONLY on the 6 section-divider slides, as the dominant visual, not a small label.
 - [ ] No decorative status dots, no scroll-cue arrows (deck is click-navigated, not scrolled), no fake version-label chrome ("v0.6", "BETA").
@@ -193,7 +193,7 @@ Every timeline above checks `reduceMotion` first and short-circuits to an instan
 
 ---
 
-## 7. Layout Mapping — All 34 Slides
+## 7. Layout Mapping — All 33 Slides
 
 Every row is a distinct layout family. No family repeats (Variance 8 requirement). Transition = the mode used to *arrive* at that slide.
 
@@ -216,25 +216,55 @@ Every row is a distinct layout family. No family repeats (Variance 8 requirement
 | 15 | Thinking Tools | Context->Goal->Constraints->References->Output | Vertical Stepper Card | 5-row fillable template, mono labels + example text per row | Cut |
 | 16 | Workflow | Section Divider "03" | Full-bleed Numeral | Same system, section name "Workflow" | Cut |
 | 17 | Workflow | Analyze -> Plan -> Review -> Implement | 4-Stage Relay + Cost Curve | Relay boxes on top, rising cost-of-mistake curve underneath, curve spikes right after "Review" if skipped | Cut |
-| 18 | Workflow | Generate / Transform / Explain / Discover | Bento Quadrant (4 equal-ish, asymmetric padding) | 4 cards, each its own accent-tinted icon zone | Cut |
+| 18 | Workflow | Generate / Transform / Explain / Discover | Bento Quadrant (4 equal-ish, asymmetric padding, clickable) | 4 cards, each its own accent-tinted icon zone; clicking a card swaps a detail panel below to a fuller explanation + concrete example, same interaction model as slides 14 and 25 | Cut |
 | 19 | Workflow | Hypotheses Before Fixes | Dual Loop Comparison | Left: tight converging spiral loop (accent). Right: flat dead-end loop (muted slate) | Cut |
 | 20 | Workflow | Refactor Is Not "Clean This Up" | 3-Gate Sequence | 3 padlock-style gates left to right, only the current gate lit | Cut |
 | 21 | Workflow | Ask It to Prove You Wrong | Speech-Bubble Contrast | Two chat-bubble panels stacked diagonally (not aligned), weak vs strong prompt | Cut |
 | 22 | Workflow | Generated Code Is Not Verified Code | Verification Pyramid (6-tier) | Literal 6-tier pyramid, mono annotation per tier ("catches: ___") | Cut |
 | 23 | Frontend Quality | Section Divider "04" | Full-bleed Numeral | Same system, section name "Frontend & Quality" | Cut |
-| 24 | Frontend Quality | Coverage Is Not Correctness | Before/After Code Diff | Two stacked code blocks, red strike vs accent-highlighted line | Cut |
-| 25 | Frontend Quality | AI as a Knowledge Tool | Risk/Reward 2x2 | Quadrant plot, "Documentation" plotted high-reward/low-risk vs. "Code-gen" plotted elsewhere | Cut |
-| 26 | Frontend Quality | The Seven Ways This Goes Wrong | Masonry Wall (7 cards) | Uneven card heights, staggered vertical offsets, mono violation-quote per card | Cut |
-| 27 | Team Standard | Section Divider "05" | Full-bleed Numeral | Same system, section name "Team Standard" | Cut |
-| 28 | Team Standard | The One Loop the Whole Team Runs | Vertical Pipeline Stepper (10 stage) | Tall vertical stepper, 2 "HUMAN REVIEW" gates lit with `--accent-glow` (moments 2 & 3 of 3), Verify branches into 3 parallel lanes that rejoin | Cut |
-| 29 | Team Standard | Ten Rules, One Team | Kinetic Rule Marquee | Continuous horizontal ticker of the 10 rules, mono-numbered, one accent word per rule (deck's single marquee) | Cut |
-| 30 | Playbooks + Advanced | Section Divider "06" | Full-bleed Numeral | Section name "Playbooks & Beyond" | Cut |
-| 31 | Playbooks | A Recipe for Every Situation | 3x3 Situation Grid | 9 cards, uniform grid intentionally (menu metaphor — the one deliberate exception, since "menu of situations" is the point) | Cut |
-| 32 | Advanced Track | Beyond Your Own Session | Layered Stack Diagram | Two horizontal bands stacked (session habits below, shared tooling above), connecting arrows upward | Cut |
-| 33 | Closing | The Five Things to Remember | Numbered Stack Reveal | 5 lines, large display type, left-aligned ragged edge (not centered), revealed in sequence | Dissolve |
-| 34 | Closing | The Actual Goal | Full-bleed Centered Quote | Single largest-type moment in the deck, true center (the one deliberate exception to anti-center-bias — closing statement, not a hero) | Dissolve |
+| 24 | Frontend Quality | AI as a Knowledge Tool | Risk/Reward 2x2 | Quadrant plot, "Documentation" plotted high-reward/low-risk vs. "Code-gen" plotted elsewhere | Cut |
+| 25 | Frontend Quality | The Seven Ways This Goes Wrong | Masonry Wall (7 cards, clickable) | Uneven card heights, staggered vertical offsets, mono violation-quote per card; clicking a card swaps a detail panel below to a real example + "Instead" fix, same interaction model as the Requirement pipeline (slide 14) | Cut |
+| 26 | Team Standard | Section Divider "05" | Full-bleed Numeral | Same system, section name "Team Standard" | Cut |
+| 27 | Team Standard | The One Loop the Whole Team Runs | Vertical Pipeline Stepper (11 stage) | Tall vertical stepper, 2 "HUMAN REVIEW" gates lit with `--accent-glow` (moments 2 & 3 of 3), Verify branches into 3 parallel lanes that rejoin, final "Merge" stage closes the loop | Cut |
+| 28 | Team Standard | Ten Rules, One Team | Kinetic Rule Marquee | Continuous horizontal ticker of the 10 rules, mono-numbered, one accent word per rule (deck's single marquee) | Cut |
+| 29 | Playbooks + Advanced | Section Divider "06" | Full-bleed Numeral | Section name "Playbooks & Beyond" | Cut |
+| 30 | Playbooks | A Recipe for Every Situation | 3x3 Situation Grid | 9 cards, uniform grid intentionally (menu metaphor — the one deliberate exception, since "menu of situations" is the point) | Cut |
+| 31 | Advanced Track | Beyond Your Own Session | Layered Stack Diagram | Two horizontal bands stacked (session habits below, shared tooling above), connecting arrows upward | Cut |
+| 32 | Closing | The Five Things to Remember | Numbered Stack Reveal | 5 lines, large display type, left-aligned ragged edge (not centered), revealed in sequence | Dissolve |
+| 33 | Closing | The Actual Goal | Full-bleed Centered Quote | Single largest-type moment in the deck, true center (the one deliberate exception to anti-center-bias — closing statement, not a hero) | Dissolve |
 
-**Family-repeat audit:** "Full-bleed Numeral" appears 6x (dividers only — same family by design, that's the section-marker system, not a content-layout repeat) and "Cut" is now the transition for every slide except the two closing Dissolve slides (31 of 34 uses) — both are intentional systems, not variance failures. Every *content* slide (5-34 excluding dividers) uses a distinct layout family. Two deliberate centered exceptions are called out explicitly (31, 34) with their justification inline.
+**Family-repeat audit:** "Full-bleed Numeral" appears 6x (dividers only — same family by design, that's the section-marker system, not a content-layout repeat) and "Cut" is now the transition for every slide except the two closing Dissolve slides — both are intentional systems, not variance failures. Every *content* slide among the original 33 (5-33 excluding dividers) uses a distinct layout family. Two deliberate centered exceptions are called out explicitly (30, 33) with their justification inline.
+
+---
+
+## 7b. Layout Mapping — The Case Study System (14 slides added post-launch)
+
+Added to answer a "make it more detailed, with real cases and best practice" request without disturbing the original 33 slides' art-gallery spacing. Each Case Study slide is a **real-case companion** inserted immediately after the concept slide it illustrates — same relationship as a footnote to its paragraph, not a new competing idea.
+
+**Layout family: Case Study Card.** Left column (5fr): 3 numbered narrative beats (setup → what happened → impact/fix), mono-numbered in accent orange. Right column (7fr): one code/prompt example, reusing the existing `.code-block` system (including its `.accent-line-text` / `.dim-line` / `.strike` modifiers for before/after contrast). Bottom strip: an accent `Best Practice` tag + one-line takeaway, hairline-divided from the body above. All 14 use the identical `.slide--casestudy` structure — this repetition is the point: once a presenter/reader sees the first one, every later one reads instantly as "here's the real case," the same way a divider instantly reads as "new section."
+
+Transition: Cut (matches the rest of the deck — these are mid-conversation beats, not chapter boundaries).
+
+Placement (companion → after which original slide):
+
+| Case | Companion to | Title |
+|---|---|---|
+| A | 5. Pilot vs. Copilot | "Build the User Management Page" Goes Wrong |
+| B | 6. Everything Lives in the Window | A Constraint Stated Once, Lost by Turn 40 |
+| C | 7. Start Fresh, or Keep Going? | One Session Call, Two Different Outcomes |
+| D | 8. Resource by Risk, Not Size | Low Effort, High Judgment, Wrong Answer |
+| E | 11. Good Context Beats a Clever Prompt | 20 Files In, Wrong Pattern Out |
+| F | 12. The Design Is the Spec | The Screenshot Never Showed "Empty" |
+| G | 13. Write Docs Agents Can Actually Use | An Outdated README Sent AI the Wrong Way |
+| H | 14. Make It Show You What It Saw | One Extra Turn, One Wrong Build Avoided |
+| I | 17. Analyze → Plan → Review → Implement | Wrong Architecture, Caught at the Cheapest Point |
+| J | 18. Generate, Transform, Explain, Discover | "Convert to TypeScript" Quietly Changed Behavior |
+| K | 19. Hypotheses Before Fixes | Three Hypotheses, One Confirmed, Zero Guesses |
+| L | 20. Refactor Is Not "Clean This Up" | "Preserve Behavior" Meant Keeping a Known Bug |
+| M | 21. Ask It to Prove You Wrong | "Is This Good?" Said Yes. "Prove It's Wrong" Found the Bug. |
+| N | 24. AI as a Knowledge Tool | "What Would Break If I Deleted This?" |
+
+Deck total: 33 original + 14 case studies = **47 slides**. `TRANSITIONS` and `TOC` in the script are both 47 entries long, in slide order — keep them in sync if slides are added or reordered again.
 
 ---
 

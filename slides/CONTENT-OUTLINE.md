@@ -2,6 +2,8 @@
 
 *Speaker-led deck: minimal on-slide text, presenter narrates. Each block below = one slide's worth of content.*
 
+**Real Case companions:** 14 slides were added after the original 33, each a "Real Case" card inserted right after the concept slide it illustrates (see DESIGN.md Section 7b for the full placement table and layout spec). They exist to answer "what does this actually look like in practice" with a concrete scenario, a code/prompt example, and a one-line best-practice takeaway — without changing any of the 33 slides below. The deck is 47 slides total.
+
 ---
 
 ## OPENING: Training Objective
@@ -299,7 +301,7 @@ Do not write code.
 - Explain: name the dimension (state flow, timing) not "what does this do"
 - Discover: ask AI to find existing patterns before inventing new ones
 
-**best_visual:** Four-quadrant grid, one job per quadrant with icon + one-line risk/tip.
+**best_visual:** Four-quadrant grid, one job per quadrant with icon + one-line risk/tip. Clickable: selecting a quadrant swaps a detail panel below to a fuller explanation and a concrete example, same interaction as slides 14 and 25.
 
 **code_or_example:**
 ```
@@ -307,6 +309,12 @@ Find the pattern used by this repository
 for handling mutation errors.
 Do not create a new abstraction.
 ```
+
+**per-quadrant detail (explanation + example):**
+1. **Generate** — asking AI to produce new code from a description, when nothing like it exists yet. Best when the unit is small and self-contained (a function, a component, a test) so you can check correctness in one read. *Example:* "Generate a function that formats a number as currency for en-US, ko-KR, and vi-VN."
+2. **Transform** — different from Generate: the code already exists and already works; you're asking AI to change it, not write it from scratch (convert JS to TypeScript, rename a pattern across files, extract a hook, swap a library). The risk unique to Transform: AI can silently "improve" things you never asked it to touch — a null check it assumes is dead code, a default it thinks is safer. Because the input already worked, any unstated change is a regression, not an improvement. *Example:* "Convert this JS function to TypeScript. Constraint: behavior must stay byte-for-byte identical for every existing caller. Do not 'fix' anything." (this is the exact scenario in Real Case J, right after this slide)
+3. **Explain** — asking AI to describe existing code back to you in a way that surfaces something you don't understand. "What does this do?" gets a shallow paraphrase; naming a dimension (state flow, timing, error handling) forces AI to trace the code along that axis. *Example:* "Explain the timing of this component's data fetches: what triggers each one, and can two of them race?"
+4. **Discover** — using AI as a search tool over your own codebase before writing anything new, so the next unit of work reuses the existing pattern instead of inventing a competing one. *Example:* "Find every place in this repo that debounces a search input. Show me the pattern in use before I write a new one."
 
 ---
 
@@ -399,31 +407,7 @@ could cause incorrect behavior.
 
 # SECTION: Frontend & Quality Depth
 
-## 01-ai-for-testing
-
-**slide_title:** Coverage Is Not Correctness
-
-**key_points:**
-- Generate against a real sibling test file, not from scratch
-- Name categories explicitly: happy path, empty, error, boundary
-- Ask for edge cases as a separate step (stale data, permission changes)
-- Review test quality: implementation details? weak assertions? duplicates?
-- The test: "would this go red if I broke the logic?"
-
-**best_visual:** Before/after test snippet: `toBeDefined()` (useless) vs. `expect(result.total).toBe(180)` (meaningful).
-
-**core_quote:** "If I introduced a real bug here, would this test go red?"
-
-**code_or_example:**
-```ts
-it("calculates order total", () => {
-  expect(result).toBeDefined(); // passes even if logic is deleted
-});
-```
-
----
-
-## 02-ai-for-documentation
+## 01-ai-for-documentation
 
 **slide_title:** AI as a Knowledge Tool, Not Just a Coder
 
@@ -444,7 +428,7 @@ Flag anything that looks like a workaround for a bug elsewhere.
 
 ---
 
-## 03-ai-anti-patterns
+## 02-ai-anti-patterns
 
 **slide_title:** The Seven Ways This Goes Wrong
 
@@ -457,13 +441,22 @@ Flag anything that looks like a workaround for a bug elsewhere.
 - Endless Conversation — one thread, five unrelated tasks
 - Over-Automation — architecture/security decided by default
 
-**best_visual:** 7-card "wall of shame" grid, each card a red-flagged anti-pattern icon with its one-line violation quote.
+**best_visual:** 7-card "wall of shame" grid, each card a red-flagged anti-pattern icon with its one-line violation quote. Clickable: selecting a card swaps a detail panel below to a real example and a corrective "Instead" line, same interaction as the Requirement pipeline (slide 14).
 
 **code_or_example:**
 ```
 Make this better.
 ```
 (No context, criteria, or expected output)
+
+**per-card detail (real example + instead):**
+1. **Vague Prompting** — No context, no criteria, no expected output; AI picks something plausible-looking and calls it done. *Instead:* state the specific problem, the failing constraint, and what "done" looks like.
+2. **Premature Coding** — "Build the settings page" lands as a fully-coded component before anyone agreed on what state it owns or which layer calls the API. *Instead:* get a plan or contract reviewed before implementation starts, even a rough one.
+3. **Context Dumping** — Handing over every file "just in case" makes the oldest, least-relevant pattern in the repo carry the same weight as the current one. *Instead:* point at the 2-3 files that are the actual reference pattern, nothing else.
+4. **Blind Acceptance** — A build that compiles and renders says nothing about edge cases, race conditions, or whether it matches the requirement. *Instead:* run it through the verification pyramid before calling it done.
+5. **AI-Driven Architecture** — A suggestion made inside one prompt, with no visibility into the rest of the codebase's conventions, quietly becomes the team's state-management decision. *Instead:* treat AI's suggestion as one input to a human decision, not the decision itself.
+6. **Endless Conversation** — A session that started debugging a modal drifts into a refactor, then a feature, then a copy change; every new answer is colored by unrelated earlier turns. *Instead:* when the task category changes, `/clear`.
+7. **Over-Automation** — Letting AI decide dependencies, error handling, or security boundaries by default because asking felt like friction. *Instead:* name who is deciding architecture, security, and correctness, and make sure it's a person.
 
 ---
 

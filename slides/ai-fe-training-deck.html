@@ -664,9 +664,17 @@ code, .code-block {
    21. SLIDE 18 -- BENTO QUADRANT (GENERATE/TRANSFORM/EXPLAIN/DISCOVER)
    ========================================================= */
 .slide--quadrant4 .q4-frame {display: flex; flex-direction: column; }
-.slide--quadrant4 .r-title { font-size: var(--size-h1); margin: 20px 0 40px; }
-.q4-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
-.q4-card { background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel); box-shadow: var(--shadow-elevated); display: flex; flex-direction: column; }
+.slide--quadrant4 .r-title { font-size: var(--size-h1); margin: 20px 0 28px; }
+.q4-grid { flex: 0 0 auto; height: 420px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; }
+.q4-card {
+  background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-elevated); display: flex; flex-direction: column;
+  cursor: pointer; transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+.q4-card:hover { border-color: var(--accent-line); transform: translateY(-3px); }
+.q4-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.q4-card.is-selected { border-color: var(--accent-line); background: var(--accent-soft); }
+.q4-card.is-selected .q4-name { color: var(--accent); }
 .q4-card .q4-zone { width: 64px; height: 64px; border-radius: var(--radius-panel); background: var(--accent-soft); color: var(--accent); font-family: var(--font-mono); font-size: 26px; display: flex; align-items: center; justify-content: center; }
 .q4-card .q4-name { font-family: var(--font-display); font-size: 28px; margin-top: 20px; }
 .q4-card .q4-tip { font-size: var(--size-small); color: var(--text-secondary); margin-top: 12px; max-width: 90%; }
@@ -674,6 +682,14 @@ code, .code-block {
 .q4-card.pad-br { padding: 56px 40px 24px 56px; justify-content: flex-end; }
 .q4-card.pad-tr { padding: 24px 56px 56px 40px; justify-content: flex-start; }
 .q4-card.pad-bl { padding: 56px 24px 40px 40px; justify-content: flex-end; }
+.q4-lower { flex: 1; display: flex; flex-direction: column; justify-content: center; margin-top: 32px; border-top: 1px solid var(--border-hair); padding-top: 28px; }
+.q4-detail { max-width: 1200px; }
+.q4-detail-top { display: flex; align-items: center; gap: 20px; margin-bottom: 16px; }
+.q4-detail-zone { width: 40px; height: 40px; border-radius: var(--radius-panel); background: var(--accent-soft); color: var(--accent); font-family: var(--font-mono); font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.q4-detail-name { font-family: var(--font-display); font-size: var(--size-h2); color: var(--text-primary); }
+.q4-detail-example { font-size: var(--size-body); color: var(--text-secondary); max-width: 900px; margin-bottom: 20px; }
+.q4-detail-fix { display: flex; align-items: baseline; gap: 14px; }
+.q4-detail-fix-text { font-family: var(--font-mono); font-size: var(--size-small); color: var(--text-primary); max-width: 780px; }
 
 /* =========================================================
    22. SLIDE 19 -- DUAL LOOP COMPARISON
@@ -786,18 +802,33 @@ code, .code-block {
    28. SLIDE 26 -- MASONRY WALL (7 ANTI-PATTERNS)
    ========================================================= */
 .slide--masonry .mw-frame {display: flex; flex-direction: column; }
-.slide--masonry .r-title { font-size: var(--size-h1); margin: 20px 0 36px; }
-.mw-columns { flex: 1; display: flex; gap: 20px; }
-.mw-col { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-.mw-col:nth-child(2) { margin-top: 60px; }
-.mw-col:nth-child(3) { margin-top: 20px; }
-.mw-col:nth-child(4) { margin-top: 90px; }
-.mw-card { background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel); box-shadow: var(--shadow-elevated); padding: 26px; }
-.mw-card .mw-flag { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-.mw-card .mw-name { font-family: var(--font-display); font-size: 22px; margin-bottom: 12px; }
-.mw-card .mw-quote { font-family: var(--font-mono); font-size: 14px; color: var(--text-tertiary); }
-.mw-card.tall { padding-bottom: 46px; }
-.mw-card.short .mw-quote { display: none; }
+.slide--masonry .r-title { font-size: var(--size-h1); margin: 20px 0 28px; }
+.mw-columns { flex: 0 0 auto; display: flex; gap: 20px; }
+.mw-col { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.mw-col:nth-child(2) { margin-top: 44px; }
+.mw-col:nth-child(3) { margin-top: 14px; }
+.mw-col:nth-child(4) { margin-top: 64px; }
+.mw-card {
+  background: var(--bg-elevated); border: 1px solid var(--border-hair); border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-elevated); padding: 18px 20px;
+  cursor: pointer; transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+.mw-card:hover { border-color: var(--accent-line); transform: translateY(-3px); }
+.mw-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.mw-card .mw-flag { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.mw-card .mw-name { font-family: var(--font-display); font-size: 20px; margin-bottom: 8px; }
+.mw-card .mw-quote { font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); }
+.mw-card.is-selected { border-color: var(--accent-line); background: var(--accent-soft); }
+.mw-card.is-selected .mw-name { color: var(--accent); }
+.mw-lower { flex: 1; display: flex; flex-direction: column; justify-content: center; margin-top: 32px; border-top: 1px solid var(--border-hair); padding-top: 28px; }
+.mw-detail { max-width: 1200px; }
+.mw-detail-top { display: flex; align-items: baseline; gap: 20px; margin-bottom: 16px; }
+.mw-detail-num { font-family: var(--font-mono); font-size: var(--size-small); color: var(--accent); }
+.mw-detail-name { font-family: var(--font-display); font-size: var(--size-h2); color: var(--text-primary); }
+.mw-detail-kicker { margin-left: auto; }
+.mw-detail-example { font-size: var(--size-body); color: var(--text-secondary); max-width: 900px; margin-bottom: 20px; }
+.mw-detail-fix { display: flex; align-items: baseline; gap: 14px; }
+.mw-detail-fix-text { font-family: var(--font-mono); font-size: var(--size-small); color: var(--text-primary); max-width: 780px; }
 
 /* =========================================================
    29. SLIDE 28 -- VERTICAL PIPELINE STEPPER (10 STAGE)
@@ -817,7 +848,9 @@ code, .code-block {
 .vs-branch { margin-left: 44px; display: flex; gap: 10px; padding: 10px 0 14px; }
 .vs-chip { font-family: var(--font-mono); font-size: 13px; padding: 8px 14px; border: 1px solid var(--border-hair-2); border-radius: 999px; color: var(--text-secondary); }
 .vs-merge-note { margin-left: 44px; font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); padding-bottom: 6px; }
-.vs-caption { align-self: flex-end; margin-top: 32px; font-size: 24px; color: var(--text-secondary); font-family: var(--font-display); max-width: 480px; }
+.vs-stage.final { padding: 14px 0; }
+.vs-stage.final .vs-dot { background: var(--accent); border-color: var(--accent); color: var(--bg-primary); font-size: 14px; }
+.vs-stage.final .vs-name { color: var(--text-primary); font-weight: 600; font-size: 22px; }
 
 /* =========================================================
    30. SLIDE 29 -- KINETIC RULE MARQUEE
@@ -909,6 +942,26 @@ code, .code-block {
   padding: 12px 16px; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
 }
 .edit-mode-banner.show { opacity: 1; }
+
+/* =========================================================
+   37b. CASE STUDY SYSTEM (15 slides share this family, by design --
+   same rationale as the divider system in Section 9: a recurring
+   narrative beat companion to a concept slide, not a competing
+   content layout. See DESIGN.md Section 7b.
+   ========================================================= */
+.slide--casestudy .cs-frame { display: flex; flex-direction: column; }
+.slide--casestudy .r-kicker { margin-bottom: 4px; }
+.slide--casestudy .r-title { font-size: var(--size-h1); margin: 20px 0 44px; max-width: 1400px; }
+.cs-body { flex: 1; display: grid; grid-template-columns: 5fr 7fr; column-gap: 64px; align-items: center; }
+.cs-case { display: flex; flex-direction: column; gap: 26px; }
+.cs-beat { display: flex; gap: 18px; }
+.cs-beat-num { font-family: var(--font-mono); font-size: var(--size-small); color: var(--accent); flex-shrink: 0; width: 30px; padding-top: 2px; }
+.cs-beat-text { font-size: var(--size-body); color: var(--text-secondary); line-height: 1.5; }
+.cs-beat-text strong { color: var(--text-primary); font-weight: 500; }
+.cs-example { display: flex; flex-direction: column; justify-content: center; }
+.cs-example .code-block { font-size: 19px; padding: 30px 34px; }
+.cs-practice { margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--border-hair); display: flex; align-items: baseline; gap: 22px; }
+.cs-practice-text { font-family: var(--font-display); font-size: 27px; color: var(--text-primary); max-width: 1300px; }
 
 /* =========================================================
    37. TABLE OF CONTENTS -- STICKY GLASS BUTTON + DRAWER
@@ -1107,6 +1160,31 @@ code, .code-block {
       </div>
     </section>
 
+    <!-- Case Study A: Silent Assumptions (real-case companion to Slide 5) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: SILENT ASSUMPTIONS</div>
+        <h1 class="r-title editable">&#8220;Build the User Management Page&#8221; Goes Wrong</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The ask:</strong> &#8220;Build the user management page.&#8221; Nothing else specified.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>What AI silently decided:</strong> client-side pagination, local useState, no permission check, a generic error toast.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Two sprints later:</strong> the table breaks past 500 rows, some admins see rows they shouldn't, and failed requests fail silently.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Build the user management page.
+
+<span class="dim-line">// AI fills every unstated gap on its own:
+// pagination? state? permissions? errors?</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">State every decision you're not making explicitly: AI will make it for you, silently.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 6: Everything Lives in the Window -->
     <section class="slide s6 slide--glass" data-transition="cut">
       <div class="slide-frame glass-frame">
@@ -1123,6 +1201,32 @@ code, .code-block {
         <div>
           <h1 class="r-title editable">Everything Lives in the Window</h1>
           <p class="r-item glass-quote editable">"If it is not in the window, it does not exist for this response."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study B: The Buried Constraint (real-case companion to Slide 6) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE BURIED CONSTRAINT</div>
+        <h1 class="r-title editable">A Constraint Stated Once, Lost by Turn 40</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>Turn 1:</strong> &#8220;Constraints: strict TypeScript, no new deps, do not modify the API layer.&#8221;</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>Turn 40:</strong> deep in an unrelated refactor, AI &#8220;simplifies&#8221; userService.ts's response shape to tidy up a type.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Result:</strong> three other callers silently break. The constraint was never repeated, so it quietly lost its weight.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Turn 1:  "Do not modify the API layer."
+<span class="dim-line">...</span>
+Turn 40: [refactors userService.ts anyway]
+
+<span class="accent-line-text">Fix -&gt; restate the constraint before any risky step.</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Restate load-bearing constraints before a risky step. Don't assume turn 1 still carries weight at turn 40.</span>
         </div>
       </div>
     </section>
@@ -1146,6 +1250,29 @@ code, .code-block {
         <div class="decision-code r-item">
           <span class="code-block editable">/clear   -&gt; blank slate, different task
 /compact -&gt; same task, summarized, more room</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study C: Compact vs Clear, in Practice (real-case companion to Slide 7) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: COMPACT VS CLEAR</div>
+        <h1 class="r-title editable">One Session Call, Two Different Outcomes</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>Right call:</strong> 15 turns into a stale-closure bug, same file, same hypothesis chain &#8594; /compact. Evidence trail survives, more room to keep going.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>Wrong call:</strong> next task is &#8220;add a dark mode toggle,&#8221; unrelated, but the engineer keeps going in the same session instead of /clear.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>What happens:</strong> AI blends the abandoned debugging approach into the new toggle work, half-applying a fix nobody asked for.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">/clear   -&gt; blank slate, different task
+/compact -&gt; same task, summarized, more room</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Session boundaries should track the task, not the clock.</span>
         </div>
       </div>
     </section>
@@ -1174,6 +1301,30 @@ code, .code-block {
       </div>
     </section>
 
+    <!-- Case Study D: The Under-Provisioned Fix (real-case companion to Slide 8) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE UNDER-PROVISIONED FIX</div>
+        <h1 class="r-title editable">Low Effort, High Judgment, Wrong Answer</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The task:</strong> &#8220;Make the optimistic UI reconcile with the websocket push.&#8221; Routed at default, low effort, because it looked small.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>First plausible answer:</strong> overwrite optimistic state unconditionally whenever a socket message arrives.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Shipped, then discovered:</strong> out-of-order messages drop legitimate optimistic updates, causing days of UI flicker complaints before the cause was found.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable"><span class="dim-line">// looked small, was actually judgment-heavy</span>
+socket.on('update', msg =&gt; setState(msg.data));
+<span class="strike">// drops a still-pending optimistic write</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">When unsure, round up. Over-provisioning costs time; under-provisioning ships a confidently wrong answer.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 9: Section Divider 02 -->
     <section class="slide s9 slide--divider" data-transition="cut">
       <div class="divider-numeral">02</div>
@@ -1188,9 +1339,9 @@ code, .code-block {
         <div class="r-kicker editable">PROBLEM DECOMPOSITION</div>
         <h1 class="r-title editable">Requirement &#8594; Contract, Not Code</h1>
         <div class="pipeline-row r-diagram" id="pipelineRow10">
-          <div class="pipeline-stage" data-stage-index="0" role="button" tabindex="0" aria-pressed="false"><div class="p-num">01</div><div class="p-name editable">Requirement</div></div>
+          <div class="pipeline-stage is-selected" data-stage-index="0" role="button" tabindex="0" aria-pressed="true"><div class="p-num">01</div><div class="p-name editable">Requirement</div></div>
           <div class="pipeline-connector"></div>
-          <div class="pipeline-stage is-selected" data-stage-index="1" role="button" tabindex="0" aria-pressed="true"><div class="p-num">02</div><div class="p-name editable">Contract</div></div>
+          <div class="pipeline-stage" data-stage-index="1" role="button" tabindex="0" aria-pressed="false"><div class="p-num">02</div><div class="p-name editable">Contract</div></div>
           <div class="pipeline-connector"></div>
           <div class="pipeline-stage" data-stage-index="2" role="button" tabindex="0" aria-pressed="false"><div class="p-num">03</div><div class="p-name editable">Data</div></div>
           <div class="pipeline-connector"></div>
@@ -1205,16 +1356,12 @@ code, .code-block {
         <div class="pipeline-lower">
           <div class="pipeline-detail r-item" id="pipelineDetail10">
             <div class="pd-top">
-              <span class="pd-num" id="pdNum10">02</span>
-              <h3 class="pd-name" id="pdName10">Contract</h3>
-              <span class="r-kicker pd-kicker" id="pdKicker10">DEPENDENCY GRAPH</span>
+              <span class="pd-num" id="pdNum10">01</span>
+              <h3 class="pd-name" id="pdName10">Requirement</h3>
+              <span class="r-kicker pd-kicker" id="pdKicker10">STARTING POINT</span>
             </div>
-            <p class="pd-desc" id="pdDesc10">Contract = a type, not a sentence. Break into small, ordered, reviewable tasks &#8212; independent tasks run in parallel, dependent tasks run in sequence.</p>
-            <div class="pd-example" id="pdExample10"><span class="code-block">type UserFilter = {
-  keyword: string;
-  roles: Role[];
-  status?: UserStatus;
-};</span></div>
+            <p class="pd-desc" id="pdDesc10">What the user actually asked for, in their own words, still ambiguous. Role names undefined, edge cases unstated.</p>
+            <div class="pd-example" id="pdExample10"><div class="pd-quote">&#8220;Let people filter the user list by keyword, role, and status.&#8221;</div></div>
           </div>
         </div>
       </div>
@@ -1249,6 +1396,30 @@ code, .code-block {
       </div>
     </section>
 
+    <!-- Case Study E: Context Pollution in the Wild (real-case companion to Slide 11) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: CONTEXT POLLUTION IN THE WILD</div>
+        <h1 class="r-title editable">20 Files In, Wrong Pattern Out</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>Handed to AI:</strong> the entire /api folder, all components, all hooks, all CSS, &#8220;just in case.&#8221;</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>What AI picked:</strong> the oldest modal pattern in the repo, from a page nobody maintains, weighted equally with the current one.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Should have been:</strong> UserFilter type, the filter API, OrderFilterModal.tsx, the existing Form and Select, one similar feature. Nothing else.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable"><span class="strike">Bad:  20 files + entire /api + all components + all hooks</span>
+<span class="accent-line-text">Good: UserFilter type, Filter API, OrderFilterModal.tsx,
+      existing Form, existing Select, one similar feature</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Minimum sufficient context: everything needed, nothing extra.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 12: The Design Is the Spec -->
     <section class="slide s12 slide--design-spec" data-transition="cut">
       <div class="slide-frame ds-frame">
@@ -1273,6 +1444,30 @@ code, .code-block {
       </div>
     </section>
 
+    <!-- Case Study F: The State Nobody Designed (real-case companion to Slide 12) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE STATE NOBODY DESIGNED</div>
+        <h1 class="r-title editable">The Screenshot Never Showed &#8220;Empty&#8221;</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The Figma frame:</strong> one populated table, 12 rows, nothing else.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>What shipped:</strong> no empty state, no loading skeleton, no error state. None were in the frame, so none were built.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>First customer with zero users:</strong> saw a bare white card floating under the header.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Before coding, decide:
+Empty state?  Loading state?  Error state?
+Hover / focus / disabled?  Responsive breakpoints?</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">A static frame hides empty/loading/error/hover states. Decide them explicitly before implementation.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 13: Write Docs Agents Can Actually Use -->
     <section class="slide s13 slide--doc-contrast" data-transition="cut">
       <div class="slide-frame dc-frame">
@@ -1287,6 +1482,31 @@ code, .code-block {
             <pre class="code-block editable">Props: { filters: UserFilter; onApply: (f: UserFilter) =&gt; void }
 Example: &lt;UserFilterModal filters={current} onApply={setFilters} /&gt;</pre>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study G: The Doc That Lied (real-case companion to Slide 13) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE DOC THAT LIED</div>
+        <h1 class="r-title editable">An Outdated README Sent AI the Wrong Way</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The README said:</strong> &#8220;Filters sync to URL query params.&#8221; True eight months ago.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>What actually happened since:</strong> a refactor moved filter state into a Zustand store; nobody updated the doc.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Told to &#8220;follow the README,&#8221;</strong> AI reintroduced URL-based filter state next to the store, creating two sources of truth for the same state.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable"><span class="dim-line">README (stale): "Filters sync to URL query params."</span>
+Store (current): useFilterStore(), no URL sync at all.
+
+<span class="strike">-&gt; AI built both. Now which one wins?</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Outdated docs are worse than none: the agent trusts what's written, wrong or not.</span>
         </div>
       </div>
     </section>
@@ -1312,6 +1532,29 @@ Example: &lt;UserFilterModal filters={current} onApply={setFilters} /&gt;</pre>
 - the data shape you'll use
 - the states this component can be in
 - a rough visual layout (ASCII sketch or one paragraph)</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study H: Caught Before Code (real-case companion to Slide 14) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: CAUGHT BEFORE CODE</div>
+        <h1 class="r-title editable">One Extra Turn, One Wrong Build Avoided</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>Asked first:</strong> &#8220;Before implementing, describe back the data shape, the states, and a rough layout.&#8221;</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>AI restated:</strong> assumed status is a required field on every user row.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Caught immediately:</strong> &#8220;status is optional, remember guest accounts.&#8221; Fixed before a single line of code existed.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable"><span class="strike">AI restated: status: UserStatus  // assumed required</span>
+<span class="accent-line-text">Correct:     status?: UserStatus // guests have none</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">A mismatch here is caught before code, the cheapest place in the whole loop.</span>
         </div>
       </div>
     </section>
@@ -1368,15 +1611,73 @@ Do not write code.</span>
       </div>
     </section>
 
+    <!-- Case Study I: The Plan Caught It (real-case companion to Slide 17) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE PLAN CAUGHT IT</div>
+        <h1 class="r-title editable">Wrong Architecture, Caught at the Cheapest Point</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The plan proposed:</strong> a new reports search page, with filter state owned by useState inside ReportsFilterPanel.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>Human review flagged:</strong> filtered views on this page need to be shareable and bookmarkable, which means URL-owned state.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Revised before implementation:</strong> zero lines of component code had been written yet.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Revise the plan.
+The filter state should be URL-owned,
+not component-owned.</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">The plan is the cheapest place to catch a wrong direction. A code review after the fact costs far more.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 18: Generate / Transform / Explain / Discover -->
     <section class="slide s18 slide--quadrant4" data-transition="cut">
       <div class="slide-frame q4-frame">
         <h1 class="r-title editable">Generate, Transform, Explain, Discover</h1>
-        <div class="q4-grid r-diagram">
-          <div class="q4-card pad-tl"><div class="q4-zone">G</div><div class="q4-name editable">Generate</div><div class="q4-tip editable">Best for small, self-contained units.</div></div>
-          <div class="q4-card pad-tr"><div class="q4-zone">T</div><div class="q4-name editable">Transform</div><div class="q4-tip editable">Risk is silent alteration - state what must stay identical.</div></div>
-          <div class="q4-card pad-bl"><div class="q4-zone">E</div><div class="q4-name editable">Explain</div><div class="q4-tip editable">Name the dimension (state flow, timing), not "what does this do."</div></div>
-          <div class="q4-card pad-br"><div class="q4-zone">D</div><div class="q4-name editable">Discover</div><div class="q4-tip editable">Ask AI to find existing patterns before inventing new ones.</div></div>
+        <div class="q4-grid r-diagram" id="q4Grid18">
+          <div class="q4-card pad-tl is-selected" data-job-index="0" role="button" tabindex="0" aria-pressed="true"><div class="q4-zone">G</div><div class="q4-name editable">Generate</div><div class="q4-tip editable">Best for small, self-contained units.</div></div>
+          <div class="q4-card pad-tr" data-job-index="1" role="button" tabindex="0" aria-pressed="false"><div class="q4-zone">T</div><div class="q4-name editable">Transform</div><div class="q4-tip editable">Risk is silent alteration - state what must stay identical.</div></div>
+          <div class="q4-card pad-bl" data-job-index="2" role="button" tabindex="0" aria-pressed="false"><div class="q4-zone">E</div><div class="q4-name editable">Explain</div><div class="q4-tip editable">Name the dimension (state flow, timing), not "what does this do."</div></div>
+          <div class="q4-card pad-br" data-job-index="3" role="button" tabindex="0" aria-pressed="false"><div class="q4-zone">D</div><div class="q4-name editable">Discover</div><div class="q4-tip editable">Ask AI to find existing patterns before inventing new ones.</div></div>
+        </div>
+        <div class="q4-lower r-item">
+          <div class="q4-detail" id="q4Detail18">
+            <div class="q4-detail-top">
+              <span class="q4-detail-zone" id="q4Zone18">G</span>
+              <h3 class="q4-detail-name" id="q4Name18">Generate</h3>
+            </div>
+            <p class="q4-detail-example" id="q4Explain18">Generate means asking AI to produce new code from a description, when nothing like it exists yet in the codebase. It works best when the unit is small and self-contained, a single function, a single component, a single test, something whose correctness you can check in one read.</p>
+            <div class="q4-detail-fix"><span class="tag accent">Example</span><span class="q4-detail-fix-text" id="q4Example18">"Generate a function that formats a number as currency for en-US, ko-KR, and vi-VN."</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study J: Migrating Without Breaking Parity (real-case companion to Slide 18) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: MIGRATING WITHOUT BREAKING PARITY</div>
+        <h1 class="r-title editable">&#8220;Convert to TypeScript&#8221; Quietly Changed Behavior</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The ask:</strong> &#8220;Convert this JS function to TypeScript.&#8221;</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>What AI also did:</strong> &#8220;fixed&#8221; a null-check it assumed was a leftover bug.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>What actually broke:</strong> that null-check was load-bearing for one legacy caller. Parity broke silently, since nothing was stated as off-limits.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Convert this JS function to TypeScript.
+<span class="accent-line-text">Constraint: behavior must stay byte-for-byte identical
+for every existing caller. Do not "fix" anything.</span></span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Transform's risk is silent alteration: state what must stay identical, not just what to convert.</span>
         </div>
       </div>
     </section>
@@ -1405,6 +1706,30 @@ Do not write code.</span>
       </div>
     </section>
 
+    <!-- Case Study K: The Modal That Wouldn't Close (real-case companion to Slide 19) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE MODAL THAT WOULDN'T CLOSE</div>
+        <h1 class="r-title editable">Three Hypotheses, One Confirmed, Zero Guesses</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>Expected:</strong> modal closes after a successful mutation. <strong>Actual:</strong> API succeeds, modal stays open.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>Three hypotheses requested:</strong> (1) onSuccess never wired to setOpen(false), (2) stale closure over an old setOpen, (3) mutation resolves after unmount.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Evidence confirmed:</strong> #2, a stale closure. Root-cause note written before the fix shipped.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">List the top 3 possible causes.
+For each: explain why, identify evidence,
+suggest how to verify it.</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">The engineer verifies the hypothesis before applying a fix, not the first plausible guess.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 20: Refactor Is Not "Clean This Up" -->
     <section class="slide s20 slide--gates3" data-transition="cut">
       <div class="slide-frame g3-frame">
@@ -1424,6 +1749,30 @@ no new dependencies, keep the diff minimal.</span>
       </div>
     </section>
 
+    <!-- Case Study L: Preserving a Bug on Purpose (real-case companion to Slide 20) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: PRESERVING A BUG ON PURPOSE</div>
+        <h1 class="r-title editable">&#8220;Preserve Behavior&#8221; Meant Keeping a Known Bug</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The refactor:</strong> deduplicate a filter-validation function used in three places.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>First draft &#8220;improved&#8221; it:</strong> trimmed whitespace on an empty keyword, technically better.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>Why it was reverted:</strong> a downstream analytics dashboard depended on the exact old string match. Structural refactor shipped; the &#8220;fix&#8221; became its own ticket.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Implement approach 1.
+Constraints: preserve behavior exactly,
+no public API changes, keep the diff minimal.</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Preserve behavior can mean preserving existing bugs on purpose. Refactor and bugfix are two different changes.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Slide 21: Ask It to Prove You Wrong -->
     <section class="slide s21 slide--bubbles" data-transition="cut">
       <div class="slide-frame bb-frame">
@@ -1438,6 +1787,30 @@ no new dependencies, keep the diff minimal.</span>
           <span class="editable">"Try to prove this implementation is wrong.
 Find inputs, states, or interactions that
 could cause incorrect behavior."</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Study M: The Review That Found the Race Condition (real-case companion to Slide 21) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: THE REVIEW THAT FOUND THE RACE CONDITION</div>
+        <h1 class="r-title editable">&#8220;Is This Good?&#8221; Said Yes. &#8220;Prove It's Wrong&#8221; Found the Bug.</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>Same PR, first prompt:</strong> &#8220;Is this code good?&#8221; &#8594; &#8220;Looks solid, follows conventions.&#8221;</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>Same PR, second prompt:</strong> &#8220;Try to prove this implementation is wrong.&#8221;</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>What surfaced:</strong> a rapid double-click on Apply Filter fires two overlapping requests, and the older response can resolve last and overwrite the newer result.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Try to prove this implementation is wrong.
+Find inputs, states, or interactions that
+could cause incorrect behavior.</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Do not assume the implementation is correct. Try to find reasons it could fail.</span>
         </div>
       </div>
     </section>
@@ -1486,20 +1859,8 @@ could cause incorrect behavior."</span>
       <div class="divider-progress">04 / 06</div>
     </section>
 
-    <!-- Slide 24: Coverage Is Not Correctness -->
-    <section class="slide s24 slide--diff" data-transition="cut">
-      <div class="slide-frame diff-frame">
-        <h1 class="r-title editable">Coverage Is Not Correctness</h1>
-        <div class="diff-stack r-diagram">
-          <div class="diff-row bad"><div class="diff-marker">&minus;</div><span class="code-block editable">expect(result).toBeDefined(); // passes even if logic is deleted</span></div>
-          <div class="diff-row good"><div class="diff-marker">+</div><span class="code-block editable">expect(result.total).toBe(180);</span></div>
-        </div>
-        <p class="diff-quote r-item editable">"If I introduced a real bug here, would this test go red?"</p>
-      </div>
-    </section>
-
-    <!-- Slide 25: AI as a Knowledge Tool -->
-    <section class="slide s25 slide--risk-reward" data-transition="cut">
+    <!-- Slide 24: AI as a Knowledge Tool -->
+    <section class="slide s24 slide--risk-reward" data-transition="cut">
       <div class="slide-frame rr-frame">
         <div>
           <div class="r-kicker editable">KNOWLEDGE TOOL</div>
@@ -1527,47 +1888,81 @@ could cause incorrect behavior."</span>
       </div>
     </section>
 
-    <!-- Slide 26: The Seven Ways This Goes Wrong -->
-    <section class="slide s26 slide--masonry" data-transition="cut">
+    <!-- Case Study O: Explaining the Legacy useEffect (real-case companion to Slide 25) -->
+    <section class="slide slide--casestudy" data-transition="cut">
+      <div class="slide-frame cs-frame">
+        <div class="r-kicker editable">REAL CASE: EXPLAINING THE LEGACY USEEFFECT</div>
+        <h1 class="r-title editable">&#8220;What Would Break If I Deleted This?&#8221;</h1>
+        <div class="cs-body">
+          <div class="cs-case r-item">
+            <div class="cs-beat"><span class="cs-beat-num">01</span><span class="cs-beat-text editable"><strong>The code:</strong> a 40-line useEffect, three dependencies, no comments, untouched for two years.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">02</span><span class="cs-beat-text editable"><strong>&#8220;What does this do?&#8221;</strong> got a vague paraphrase of the visible lines.</span></div>
+            <div class="cs-beat"><span class="cs-beat-num">03</span><span class="cs-beat-text editable"><strong>&#8220;What would break if I deleted the useEffect on line 340?&#8221;</strong> surfaced a silent permissions re-fetch after websocket reconnect, the one path with no test coverage.</span></div>
+          </div>
+          <div class="cs-example r-item">
+            <span class="code-block editable">Explain this component.
+What would break if I deleted the useEffect on line 340?
+Flag anything that looks like a workaround for a bug elsewhere.</span>
+          </div>
+        </div>
+        <div class="cs-practice r-item">
+          <span class="tag accent">Best Practice</span>
+          <span class="cs-practice-text editable">Flag anything that looks like a workaround for a bug elsewhere. Legacy code often is one.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 25: The Seven Ways This Goes Wrong -->
+    <section class="slide s25 slide--masonry" data-transition="cut">
       <div class="slide-frame mw-frame">
         <h1 class="r-title editable">The Seven Ways This Goes Wrong</h1>
-        <div class="mw-columns r-diagram">
+        <div class="mw-columns r-diagram" id="mwGrid25">
           <div class="mw-col">
-            <div class="mw-card tall"><div class="mw-flag">01</div><div class="mw-name editable">Vague Prompting</div><div class="mw-quote editable">"Make this better."</div></div>
-            <div class="mw-card"><div class="mw-flag">05</div><div class="mw-name editable">AI-Driven Architecture</div><div class="mw-quote editable">"AI suggested Zustand, so..."</div></div>
+            <div class="mw-card is-selected" data-pattern-index="0" role="button" tabindex="0" aria-pressed="true"><div class="mw-flag">01</div><div class="mw-name editable">Vague Prompting</div><div class="mw-quote editable">"Make this better."</div></div>
+            <div class="mw-card" data-pattern-index="4" role="button" tabindex="0" aria-pressed="false"><div class="mw-flag">05</div><div class="mw-name editable">AI-Driven Architecture</div><div class="mw-quote editable">"AI suggested Zustand, so..."</div></div>
           </div>
           <div class="mw-col">
-            <div class="mw-card short"><div class="mw-flag">02</div><div class="mw-name editable">Premature Coding</div></div>
-            <div class="mw-card tall"><div class="mw-flag">06</div><div class="mw-name editable">Endless Conversation</div><div class="mw-quote editable">One thread, five unrelated tasks.</div></div>
+            <div class="mw-card" data-pattern-index="1" role="button" tabindex="0" aria-pressed="false"><div class="mw-flag">02</div><div class="mw-name editable">Premature Coding</div></div>
+            <div class="mw-card" data-pattern-index="5" role="button" tabindex="0" aria-pressed="false"><div class="mw-flag">06</div><div class="mw-name editable">Endless Conversation</div><div class="mw-quote editable">One thread, five unrelated tasks.</div></div>
           </div>
           <div class="mw-col">
-            <div class="mw-card tall"><div class="mw-flag">03</div><div class="mw-name editable">Context Dumping</div><div class="mw-quote editable">Whole repo, just in case.</div></div>
-            <div class="mw-card short"><div class="mw-flag">07</div><div class="mw-name editable">Over-Automation</div></div>
+            <div class="mw-card" data-pattern-index="2" role="button" tabindex="0" aria-pressed="false"><div class="mw-flag">03</div><div class="mw-name editable">Context Dumping</div><div class="mw-quote editable">Whole repo, just in case.</div></div>
+            <div class="mw-card" data-pattern-index="6" role="button" tabindex="0" aria-pressed="false"><div class="mw-flag">07</div><div class="mw-name editable">Over-Automation</div></div>
           </div>
           <div class="mw-col">
-            <div class="mw-card"><div class="mw-flag">04</div><div class="mw-name editable">Blind Acceptance</div><div class="mw-quote editable">It compiles. Done.</div></div>
+            <div class="mw-card" data-pattern-index="3" role="button" tabindex="0" aria-pressed="false"><div class="mw-flag">04</div><div class="mw-name editable">Blind Acceptance</div><div class="mw-quote editable">It compiles. Done.</div></div>
+          </div>
+        </div>
+        <div class="mw-lower r-item">
+          <div class="mw-detail" id="mwDetail25">
+            <div class="mw-detail-top">
+              <span class="mw-detail-num" id="mwNum25">01</span>
+              <h3 class="mw-detail-name" id="mwName25">Vague Prompting</h3>
+              <span class="r-kicker mw-detail-kicker" id="mwKicker25">&#8220;MAKE THIS BETTER.&#8221;</span>
+            </div>
+            <p class="mw-detail-example" id="mwExample25">No context, no criteria, no expected output. AI has nothing to anchor a decision on, so it picks something plausible-looking and calls it done.</p>
+            <div class="mw-detail-fix"><span class="tag accent">Instead</span><span class="mw-detail-fix-text" id="mwFix25">State the specific problem, the constraint that's failing, and what "done" looks like.</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Slide 27: Section Divider 05 -->
-    <section class="slide s27 slide--divider" data-transition="cut">
+    <!-- Slide 26: Section Divider 05 -->
+    <section class="slide s26 slide--divider" data-transition="cut">
       <div class="divider-numeral">05</div>
       <div class="divider-num-label editable">Section 05</div>
       <div class="divider-name editable">Team Standard</div>
       <div class="divider-progress">05 / 06</div>
     </section>
 
-    <!-- Slide 28: The One Loop the Whole Team Runs -->
-    <section class="slide s28 slide--vstepper" data-transition="cut">
+    <!-- Slide 27: The One Loop the Whole Team Runs -->
+    <section class="slide s27 slide--vstepper" data-transition="cut">
       <div class="slide-frame vs-frame">
         <div>
           <div class="r-kicker editable">TEAM STANDARD</div>
           <h1 class="r-title editable">The One Loop the Whole Team Runs</h1>
-          <p class="vs-caption r-item editable">Merge means a human is willing to put their name on this.</p>
         </div>
-        <div class="vs-col r-diagram" id="vstepper28">
+        <div class="vs-col r-diagram" id="vstepper27">
           <div class="vs-stage"><div class="vs-dot">01</div><div class="vs-name editable">Requirement</div></div>
           <div class="vs-stage"><div class="vs-dot">02</div><div class="vs-name editable">Understand</div></div>
           <div class="vs-stage"><div class="vs-dot">03</div><div class="vs-name editable">Decompose</div></div>
@@ -1582,17 +1977,19 @@ could cause incorrect behavior."</span>
           <div class="vs-merge-note editable">3 lanes run in parallel, then rejoin</div>
           <div class="vs-stage"><div class="vs-dot">09</div><div class="vs-name editable">AI Review</div></div>
           <div class="vs-stage gate"><div class="vs-dot">&#9679;</div><div class="vs-name editable">Human Review</div></div>
+          <div class="vs-stage final"><div class="vs-dot">&#10003;</div><div class="vs-name editable">Merge</div></div>
+          <div class="vs-merge-note editable">A human is willing to put their name on this.</div>
         </div>
       </div>
     </section>
 
-    <!-- Slide 29: Ten Rules, One Team -->
-    <section class="slide s29 slide--marquee" data-transition="cut">
+    <!-- Slide 28: Ten Rules, One Team -->
+    <section class="slide s28 slide--marquee" data-transition="cut">
       <div class="r-kicker editable">TEAM CODING STANDARD</div>
       <h1 class="r-title editable">Ten Rules, One Team</h1>
       <div class="slide-frame mq-frame">
         <div class="mq-track-wrap">
-          <div class="mq-track r-diagram" id="marqueeTrack29">
+          <div class="mq-track r-diagram" id="marqueeTrack28">
             <div class="mq-set">
               <span class="mq-item"><span class="mq-num">01</span><span class="mq-text">AI doesn't decide <em>architecture</em> alone</span></span>
               <span class="mq-sep">&#9670;</span>
@@ -1642,16 +2039,16 @@ could cause incorrect behavior."</span>
       </div>
     </section>
 
-    <!-- Slide 30: Section Divider 06 -->
-    <section class="slide s30 slide--divider" data-transition="cut">
+    <!-- Slide 29: Section Divider 06 -->
+    <section class="slide s29 slide--divider" data-transition="cut">
       <div class="divider-numeral">06</div>
       <div class="divider-num-label editable">Section 06</div>
       <div class="divider-name editable">Playbooks &amp; Beyond</div>
       <div class="divider-progress">06 / 06</div>
     </section>
 
-    <!-- Slide 31: A Recipe for Every Situation (deliberate uniform grid) -->
-    <section class="slide s31 slide--grid9" data-transition="cut">
+    <!-- Slide 30: A Recipe for Every Situation (deliberate uniform grid) -->
+    <section class="slide s30 slide--grid9" data-transition="cut">
       <div class="slide-frame g9-frame">
         <h1 class="r-title editable">A Recipe for Every Situation</h1>
         <div class="g9-grid r-diagram">
@@ -1668,8 +2065,8 @@ could cause incorrect behavior."</span>
       </div>
     </section>
 
-    <!-- Slide 32: Beyond Your Own Session -->
-    <section class="slide s32 slide--stack" data-transition="cut">
+    <!-- Slide 31: Beyond Your Own Session -->
+    <section class="slide s31 slide--stack" data-transition="cut">
       <div class="slide-frame st-frame">
         <div class="r-kicker editable">ADVANCED TRACK</div>
         <h1 class="r-title editable">Beyond Your Own Session</h1>
@@ -1697,8 +2094,8 @@ could cause incorrect behavior."</span>
       </div>
     </section>
 
-    <!-- Slide 33: The Five Things to Remember -->
-    <section class="slide s33 slide--numbered-stack" data-transition="dissolve">
+    <!-- Slide 32: The Five Things to Remember -->
+    <section class="slide s32 slide--numbered-stack" data-transition="dissolve">
       <div class="slide-frame ns-frame">
         <div class="r-kicker editable">CLOSING</div>
         <h1 class="r-title editable" style="font-size: var(--size-h2); margin-bottom: 40px; color: var(--text-secondary);">The Five Things to Remember</h1>
@@ -1710,8 +2107,8 @@ could cause incorrect behavior."</span>
       </div>
     </section>
 
-    <!-- Slide 34: The Actual Goal -->
-    <section class="slide s34 slide--final-quote" data-transition="dissolve">
+    <!-- Slide 33: The Actual Goal -->
+    <section class="slide s33 slide--final-quote" data-transition="dissolve">
       <div class="fq-frame">
         <div class="fq-mark">&#8220;</div>
         <p class="r-title fq-text editable">The goal of AI-assisted development is not to make AI write more code.<br>The goal is to help <em>engineers deliver correct, maintainable software faster.</em></p>
@@ -1767,7 +2164,8 @@ could cause incorrect behavior."</span>
     'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut',
     'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut',
     'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut',
-    'cut', 'cut', 'dissolve', 'dissolve'
+    'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut', 'cut',
+    'cut', 'cut', 'cut', 'cut', 'cut', 'dissolve', 'dissolve'
   ];
 
   var SlidePresentation = (function () {
@@ -1971,7 +2369,7 @@ could cause incorrect behavior."</span>
 
   /* Static end-state only (no hide-then-reveal choreography) for prefers-reduced-motion. */
   function applyReducedMotionState(slideEl) {
-    var track = slideEl.querySelector('#marqueeTrack29');
+    var track = slideEl.querySelector('#marqueeTrack28');
     if (track) stopMarqueeStatic(track);
   }
 
@@ -1994,7 +2392,7 @@ could cause incorrect behavior."</span>
       preparePipeline(slideEl.querySelectorAll('#pipelineRow10 .pipeline-stage'), slideEl.querySelectorAll('#pipelineRow10 .pipeline-connector'));
     }
     if (slideEl.classList.contains('slide--vstepper')) {
-      gsap.set(slideEl.querySelectorAll('#vstepper28 > *'), { autoAlpha: 0, x: -14 });
+      gsap.set(slideEl.querySelectorAll('#vstepper27 > *'), { autoAlpha: 0, x: -14 });
     }
     // the marquee needs no pre-hide; it only starts its loop in the reveal phase.
   }
@@ -2022,7 +2420,7 @@ could cause incorrect behavior."</span>
       addPipelineReveal(tl, slideEl.querySelectorAll('#pipelineRow10 .pipeline-stage'), slideEl.querySelectorAll('#pipelineRow10 .pipeline-connector'), 0.1);
     }
     if (slideEl.classList.contains('slide--vstepper')) {
-      var rows = slideEl.querySelectorAll('#vstepper28 > *');
+      var rows = slideEl.querySelectorAll('#vstepper27 > *');
       if (rows.length) {
         var sub2 = gsap.timeline();
         sub2.to(rows, { autoAlpha: 1, x: 0, duration: 0.32, ease: 'power2.out', stagger: 0.09 });
@@ -2030,7 +2428,7 @@ could cause incorrect behavior."</span>
       }
     }
     if (slideEl.classList.contains('slide--marquee')) {
-      var track = slideEl.querySelector('#marqueeTrack29');
+      var track = slideEl.querySelector('#marqueeTrack28');
       if (track) tl.call(function () { startMarquee(track); }, null, 0);
     }
   }
@@ -2054,17 +2452,17 @@ could cause incorrect behavior."</span>
   var PIPELINE_STAGE_DETAIL = [
     {
       num: '01', name: 'Requirement', kicker: 'STARTING POINT',
-      desc: 'What the user actually asked for, in their own words &#8212; still ambiguous. Role names undefined, edge cases unstated.',
+      desc: 'What the user actually asked for, in their own words, still ambiguous. Role names undefined, edge cases unstated.',
       quote: '&#8220;Let people filter the user list by keyword, role, and status.&#8221;'
     },
     {
       num: '02', name: 'Contract', kicker: 'DEPENDENCY GRAPH',
-      desc: 'Contract = a type, not a sentence. Break into small, ordered, reviewable tasks &#8212; independent tasks run in parallel, dependent tasks run in sequence.',
+      desc: 'Contract = a type, not a sentence. Break into small, ordered, reviewable tasks: independent tasks run in parallel, dependent tasks run in sequence.',
       code: 'type UserFilter = {\n  keyword: string;\n  roles: Role[];\n  status?: UserStatus;\n};'
     },
     {
       num: '03', name: 'Data', kicker: 'SHAPE AT REST',
-      desc: 'Define the fields, their types, and nullability &#8212; before deciding how the UI will use them.',
+      desc: 'Define the fields, their types, and nullability, before deciding how the UI will use them.',
       code: 'interface UserRow {\n  id: string;\n  name: string;\n  role: Role;\n  status: UserStatus;\n}'
     },
     {
@@ -2074,17 +2472,17 @@ could cause incorrect behavior."</span>
     },
     {
       num: '05', name: 'Architecture', kicker: 'OWNERSHIP',
-      desc: 'Decide which layer owns the contract &#8212; hook, store, or service &#8212; and how it flows up to the UI.',
+      desc: 'Decide which layer owns the contract, hook, store, or service, and how it flows up to the UI.',
       quote: 'UserFilterModal &#8594; useUserFilter() &#8594; userService.list(filter)'
     },
     {
       num: '06', name: 'Implementation', kicker: 'NOW WRITE CODE',
-      desc: 'Only now does code get written &#8212; against the contract, not from a paragraph of prose.',
+      desc: 'Only now does code get written: against the contract, not from a paragraph of prose.',
       code: '<UserFilterModal\n  filters={current}\n  onApply={setFilters}\n/>'
     },
     {
       num: '07', name: 'Verification', kicker: 'CLOSE THE LOOP',
-      desc: 'Check the build against the contract: every field, every state, every edge case &#8212; accounted for.',
+      desc: 'Check the build against the contract: every field, every state, every edge case, all accounted for.',
       quote: 'Does the implementation satisfy the contract, not just &#8220;does it run&#8221;?'
     }
   ];
@@ -2102,7 +2500,7 @@ could cause incorrect behavior."</span>
       this.kickerEl = slideEl.querySelector('#pdKicker10');
       this.descEl = slideEl.querySelector('#pdDesc10');
       this.exampleEl = slideEl.querySelector('#pdExample10');
-      this.activeIndex = 1;
+      this.activeIndex = 0;
       this.bindEvents();
     }
 
@@ -2161,7 +2559,206 @@ could cause incorrect behavior."</span>
     return PipelineDetailController;
   }());
 
-  /* Slide 29: the deck's single continuous marquee. Stops entirely under reduced motion. */
+  /* =========================================================
+     SLIDE 25: SEVEN ANTI-PATTERNS DETAIL
+     Clicking (or Enter/Space-ing) a masonry card swaps the detail
+     panel below to a real example and a corrective suggestion.
+     ========================================================= */
+  var ANTI_PATTERN_DETAIL = [
+    {
+      num: '01', name: 'Vague Prompting', kicker: '&#8220;MAKE THIS BETTER.&#8221;',
+      example: 'No context, no criteria, no expected output. AI has nothing to anchor a decision on, so it picks something plausible-looking and calls it done.',
+      fix: 'State the specific problem, the constraint that\'s failing, and what "done" looks like.'
+    },
+    {
+      num: '02', name: 'Premature Coding', kicker: '&#8220;BUILD IT, WE\'LL FIGURE OUT THE ARCHITECTURE LATER.&#8221;',
+      example: '"Build the settings page" lands as a fully-coded component before anyone agreed on what state it owns or which layer calls the API. The code exists before the architecture decision does.',
+      fix: 'Get a plan or contract reviewed before implementation starts, even a rough one.'
+    },
+    {
+      num: '03', name: 'Context Dumping', kicker: '&#8220;WHOLE REPO, JUST IN CASE.&#8221;',
+      example: 'Handing over every file "just in case" makes the oldest, least-relevant pattern in the repo carry the same weight as the current one. AI has no signal for which pattern is actually current.',
+      fix: 'Point at the 2-3 files that are the actual reference pattern. Nothing else.'
+    },
+    {
+      num: '04', name: 'Blind Acceptance', kicker: '&#8220;IT COMPILES. DONE.&#8221;',
+      example: 'A build that compiles and renders says nothing about edge cases, race conditions, or whether it matches the actual requirement. It only says the syntax is valid.',
+      fix: 'Run it through the verification pyramid, type, lint, test, runtime, human review, before calling it done.'
+    },
+    {
+      num: '05', name: 'AI-Driven Architecture', kicker: '&#8220;AI SUGGESTED ZUSTAND, SO...&#8221;',
+      example: 'A suggestion made inside one prompt, with no visibility into the rest of the codebase\'s conventions, quietly becomes the team\'s state-management decision because nobody pushed back.',
+      fix: 'Treat AI\'s architecture suggestion as one input to a human decision, not the decision itself.'
+    },
+    {
+      num: '06', name: 'Endless Conversation', kicker: '&#8220;ONE THREAD, FIVE UNRELATED TASKS.&#8221;',
+      example: 'A session that started debugging a modal drifts into a refactor, then a new feature, then a copy change. Every new answer is now colored by three earlier, unrelated conversations still sitting in the context window.',
+      fix: 'When the task category changes, /clear. Session boundaries should track the task, not the clock.'
+    },
+    {
+      num: '07', name: 'Over-Automation', kicker: '&#8220;AI PICKED THE DEPENDENCY. NOBODY ASKED.&#8221;',
+      example: 'Letting AI decide dependency choices, error-handling strategy, or security boundaries by default, because asking felt like friction, means nobody actually made those decisions. They just happened.',
+      fix: 'Name who is deciding architecture, security, and correctness before the session starts, and make sure it\'s a person.'
+    }
+  ];
+
+  var AntiPatternDetailController = (function () {
+    function AntiPatternDetailController(slideEl) {
+      this.slideEl = slideEl;
+      this.cards = slideEl.querySelectorAll('#mwGrid25 .mw-card');
+      this.numEl = slideEl.querySelector('#mwNum25');
+      this.nameEl = slideEl.querySelector('#mwName25');
+      this.kickerEl = slideEl.querySelector('#mwKicker25');
+      this.exampleEl = slideEl.querySelector('#mwExample25');
+      this.fixEl = slideEl.querySelector('#mwFix25');
+      this.activeIndex = 0;
+      this.bindEvents();
+    }
+
+    AntiPatternDetailController.prototype.bindEvents = function () {
+      var self = this;
+      this.cards.forEach(function (card) {
+        card.addEventListener('click', function () { self.select(Number(card.dataset.patternIndex)); });
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            self.select(Number(card.dataset.patternIndex));
+          }
+        });
+      });
+    };
+
+    AntiPatternDetailController.prototype.select = function (index) {
+      if (index === this.activeIndex || !ANTI_PATTERN_DETAIL[index]) return;
+      this.activeIndex = index;
+      var self = this;
+
+      this.cards.forEach(function (card) {
+        var isSelected = Number(card.dataset.patternIndex) === index;
+        card.classList.toggle('is-selected', isSelected);
+        card.setAttribute('aria-pressed', String(isSelected));
+      });
+
+      var data = ANTI_PATTERN_DETAIL[index];
+      var detailPanel = this.slideEl.querySelector('#mwDetail25');
+
+      var applyContent = function () {
+        self.numEl.textContent = data.num;
+        self.nameEl.textContent = data.name;
+        self.kickerEl.innerHTML = data.kicker;
+        self.exampleEl.textContent = data.example;
+        self.fixEl.textContent = data.fix;
+      };
+
+      if (reduceMotion || typeof gsap === 'undefined') {
+        applyContent();
+        return;
+      }
+      gsap.to(detailPanel, {
+        autoAlpha: 0, y: 8, duration: 0.18, ease: 'power1.in',
+        onComplete: function () {
+          applyContent();
+          gsap.fromTo(detailPanel, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+        }
+      });
+    };
+
+    return AntiPatternDetailController;
+  }());
+
+  /* =========================================================
+     SLIDE 18: GENERATE / TRANSFORM / EXPLAIN / DISCOVER DETAIL
+     Clicking (or Enter/Space-ing) a quadrant card swaps the detail
+     panel below to a fuller explanation and a concrete example.
+     ========================================================= */
+  var AI_JOB_DETAIL = [
+    {
+      zone: 'G', name: 'Generate',
+      explain: 'Generate means asking AI to produce new code from a description, when nothing like it exists yet in the codebase. It works best when the unit is small and self-contained, a single function, a single component, a single test, something whose correctness you can check in one read.',
+      example: '"Generate a function that formats a number as currency for en-US, ko-KR, and vi-VN."'
+    },
+    {
+      zone: 'T', name: 'Transform',
+      explain: 'Transform is different from Generate: the code already exists and already works, you\'re asking AI to change it, not write it from scratch, e.g. convert JS to TypeScript, rename a pattern across files, extract a hook, swap one library for another. The risk unique to Transform is that AI can silently "improve" things you never asked it to touch, a null check it assumes is dead code, a default it thinks is safer. Because the input already worked, any unstated change is a regression, not an improvement.',
+      example: '"Convert this JS function to TypeScript. Constraint: behavior must stay byte-for-byte identical for every existing caller. Do not \'fix\' anything." (see the Real Case right after this slide for what happens when that constraint is left unsaid)'
+    },
+    {
+      zone: 'E', name: 'Explain',
+      explain: 'Explain means asking AI to describe existing code back to you in a way that surfaces something you don\'t yet understand. "What does this do?" gets a shallow paraphrase of the visible lines. Naming a specific dimension, state flow, timing, error handling, forces AI to trace the code along that axis and surface what\'s actually happening, including what silently isn\'t handled.',
+      example: '"Explain the timing of this component\'s data fetches: what triggers each one, and can two of them race?"'
+    },
+    {
+      zone: 'D', name: 'Discover',
+      explain: 'Discover means using AI as a search tool over your own codebase before writing anything new: find the existing pattern for X, so the next unit of work reuses it instead of inventing a competing one. This is the antidote to duplicate patterns nobody notices until there are three different modal-close implementations in the same app.',
+      example: '"Find every place in this repo that debounces a search input. Show me the pattern in use before I write a new one."'
+    }
+  ];
+
+  var JobDetailController = (function () {
+    function JobDetailController(slideEl) {
+      this.slideEl = slideEl;
+      this.cards = slideEl.querySelectorAll('#q4Grid18 .q4-card');
+      this.zoneEl = slideEl.querySelector('#q4Zone18');
+      this.nameEl = slideEl.querySelector('#q4Name18');
+      this.explainEl = slideEl.querySelector('#q4Explain18');
+      this.exampleEl = slideEl.querySelector('#q4Example18');
+      this.activeIndex = 0;
+      this.bindEvents();
+    }
+
+    JobDetailController.prototype.bindEvents = function () {
+      var self = this;
+      this.cards.forEach(function (card) {
+        card.addEventListener('click', function () { self.select(Number(card.dataset.jobIndex)); });
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            self.select(Number(card.dataset.jobIndex));
+          }
+        });
+      });
+    };
+
+    JobDetailController.prototype.select = function (index) {
+      if (index === this.activeIndex || !AI_JOB_DETAIL[index]) return;
+      this.activeIndex = index;
+      var self = this;
+
+      this.cards.forEach(function (card) {
+        var isSelected = Number(card.dataset.jobIndex) === index;
+        card.classList.toggle('is-selected', isSelected);
+        card.setAttribute('aria-pressed', String(isSelected));
+      });
+
+      var data = AI_JOB_DETAIL[index];
+      var detailPanel = this.slideEl.querySelector('#q4Detail18');
+
+      var applyContent = function () {
+        self.zoneEl.textContent = data.zone;
+        self.nameEl.textContent = data.name;
+        self.explainEl.textContent = data.explain;
+        self.exampleEl.textContent = data.example;
+      };
+
+      if (reduceMotion || typeof gsap === 'undefined') {
+        applyContent();
+        return;
+      }
+      gsap.to(detailPanel, {
+        autoAlpha: 0, y: 8, duration: 0.18, ease: 'power1.in',
+        onComplete: function () {
+          applyContent();
+          gsap.fromTo(detailPanel, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+        }
+      });
+    };
+
+    return JobDetailController;
+  }());
+
+  /* Slide 28: the deck's single continuous marquee. Stops entirely under reduced motion. */
   var marqueeTween = null;
   function startMarquee(track) {
     if (marqueeTween) { marqueeTween.kill(); marqueeTween = null; }
@@ -2290,26 +2887,39 @@ could cause incorrect behavior."</span>
     { title: 'Expected Capabilities' },
     { title: 'Foundations', section: true },
     { title: 'Pilot vs. Copilot' },
+    { title: 'Real Case: Silent Assumptions' },
     { title: 'Everything Lives in the Window' },
+    { title: 'Real Case: The Buried Constraint' },
     { title: 'Start Fresh, or Keep Going?' },
+    { title: 'Real Case: Compact vs Clear' },
     { title: 'Resource by Risk, Not Size' },
+    { title: 'Real Case: The Under-Provisioned Fix' },
     { title: 'Thinking Tools', section: true },
     { title: 'Requirement → Contract' },
     { title: 'Good Context Beats a Clever Prompt' },
+    { title: 'Real Case: Context Pollution in the Wild' },
     { title: 'The Design Is the Spec' },
+    { title: 'Real Case: The State Nobody Designed' },
     { title: 'Write Docs Agents Can Actually Use' },
+    { title: 'Real Case: The Doc That Lied' },
     { title: 'Make It Show You What It Saw' },
+    { title: 'Real Case: Caught Before Code' },
     { title: 'Context → Goal → Constraints → References → Output' },
     { title: 'Workflow', section: true },
     { title: 'Analyze → Plan → Review → Implement' },
+    { title: 'Real Case: The Plan Caught It' },
     { title: 'Generate, Transform, Explain, Discover' },
+    { title: 'Real Case: Migrating Without Breaking Parity' },
     { title: 'Hypotheses Before Fixes' },
+    { title: 'Real Case: The Modal That Wouldn\'t Close' },
     { title: 'Refactor Is Not "Clean This Up"' },
+    { title: 'Real Case: Preserving a Bug on Purpose' },
     { title: 'Ask It to Prove You Wrong' },
+    { title: 'Real Case: The Race Condition' },
     { title: 'Generated Code Is Not Verified Code' },
     { title: 'Frontend & Quality', section: true },
-    { title: 'Coverage Is Not Correctness' },
     { title: 'AI as a Knowledge Tool' },
+    { title: 'Real Case: Explaining the Legacy useEffect' },
     { title: 'The Seven Ways This Goes Wrong' },
     { title: 'Team Standard', section: true },
     { title: 'The One Loop the Whole Team Runs' },
@@ -2399,6 +3009,10 @@ could cause incorrect behavior."</span>
     new TocController(deck);
     var pipelineSlide = document.querySelector('.slide--pipeline');
     if (pipelineSlide) new PipelineDetailController(pipelineSlide);
+    var masonrySlide = document.querySelector('.slide--masonry');
+    if (masonrySlide) new AntiPatternDetailController(masonrySlide);
+    var quadrantSlide = document.querySelector('.slide--quadrant4');
+    if (quadrantSlide) new JobDetailController(quadrantSlide);
   });
 }());
 </script>
